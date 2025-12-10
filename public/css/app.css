@@ -1,0 +1,319 @@
+/* LabStock Custom Styles - Promenores Visuais */
+
+:root {
+    --sidebar-bg: #1e293b;
+    --sidebar-active: #3b82f6;
+    --sidebar-hover: #334155;
+    --primary: #3b82f6;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f97316;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    background-color: #f1f5f9;
+    color: #1e293b;
+}
+
+/* Sidebar Styles - Premium Look */
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--sidebar-bg) 0%, #0f172a 100%);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1.5rem 1.25rem;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header h4 {
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.sidebar-nav {
+    flex-grow: 1;
+    padding: 0.5rem 0;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 2px 0;
+}
+
+.sidebar-link i {
+    font-size: 1.1rem;
+    margin-right: 12px;
+    width: 20px;
+    transition: transform 0.2s;
+}
+
+.sidebar-link:hover {
+    background-color: var(--sidebar-hover);
+    color: white;
+}
+
+.sidebar-link:hover i {
+    transform: translateX(2px);
+}
+
+.sidebar-link.active {
+    background: linear-gradient(90deg, var(--sidebar-active) 0%, rgba(59, 130, 246, 0.8) 100%);
+    color: white;
+    border-left: 4px solid #60a5fa;
+    margin-left: 0;
+    padding-left: 16px;
+    font-weight: 500;
+}
+
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 250px;
+    min-height: 100vh;
+    background-color: #f1f5f9;
+}
+
+.bg-dark-blue {
+    background-color: var(--sidebar-bg);
+}
+
+/* Cards & Components */
+.card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+}
+
+.stat-card {
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+    background: white;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(59, 130, 246, 0.12);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.stat-icon.blue {
+    background-color: #dbeafe;
+    color: #3b82f6;
+}
+
+.stat-icon.green {
+    background-color: #d1fae5;
+    color: #10b981;
+}
+
+.stat-icon.orange {
+    background-color: #fed7aa;
+    color: #f97316;
+}
+
+.stat-icon.red {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+/* Status Badges - Melhorados */
+.badge.status-available {
+    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+    font-weight: 500;
+}
+
+.badge.status-maintenance {
+    background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+    font-weight: 500;
+}
+
+.badge.status-loaned {
+    background: linear-gradient(135deg, var(--warning) 0%, #ea580c 100%);
+    font-weight: 500;
+}
+
+.badge.status-completed {
+    background: #475569;
+    font-weight: 500;
+}
+
+/* Tables */
+.table-equipment {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-equipment thead {
+    background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.table-equipment th {
+    font-weight: 600;
+    color: #475569;
+    padding: 1rem;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.table-equipment tbody tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.2s;
+}
+
+.table-equipment tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.table-equipment tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, #2563eb 100%);
+    border: none;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-dark {
+    background-color: #1e293b;
+    border: none;
+    font-weight: 500;
+}
+
+.btn-dark:hover {
+    background-color: #0f172a;
+}
+
+.btn-success {
+    background-color: var(--success);
+    border: none;
+    font-weight: 500;
+}
+
+.btn-success:hover {
+    background-color: #059669;
+}
+
+/* Scanner */
+.scanner-area {
+    background-color: #000;
+    border-radius: 12px;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.camera-placeholder {
+    text-align: center;
+    color: #6b7280;
+}
+
+/* Equipment Image */
+.equipment-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Action Icons */
+.action-icon {
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 4px;
+}
+
+.action-icon:hover {
+    transform: scale(1.1);
+}
+
+/* User Profile Link */
+.user-profile-link {
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.user-profile-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+}
+
+.user-profile-link:hover .user-info {
+    opacity: 0.8;
+}
+
+.user-profile {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.user-profile:hover {
+    transform: translateX(2px);
+}
