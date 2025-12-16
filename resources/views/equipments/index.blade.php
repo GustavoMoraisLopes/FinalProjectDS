@@ -89,23 +89,25 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('equipments.show', $equipment) }}" class="action-icon text-info" title="Ver detalhes">
-                                <i class="bi bi-eye"></i>
-                            </a>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ route('equipments.show', $equipment) }}" class="btn btn-icon btn-outline-info" title="Ver detalhes" aria-label="Ver detalhes">
+                                    <i class="bi bi-eye"></i>
+                                </a>
 
-                            @if(auth()->user()->isAdmin())
-                            <a href="{{ route('equipments.edit', $equipment) }}" class="action-icon text-warning" title="Editar">
-                                <i class="bi bi-pencil"></i>
-                            </a>
+                                @if(auth()->user()->isAdmin())
+                                <a href="{{ route('equipments.edit', $equipment) }}" class="btn btn-icon btn-outline-warning" title="Editar" aria-label="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
 
-                            <form action="{{ route('equipments.destroy', $equipment) }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este equipamento?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-link action-icon text-danger p-0" title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                            @endif
+                                <form action="{{ route('equipments.destroy', $equipment) }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este equipamento?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-icon btn-outline-danger" title="Eliminar" aria-label="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty
@@ -135,15 +137,13 @@
     const statusSelect = document.getElementById('statusSelect');
     const clearBtn = document.getElementById('clearFilters');
 
-    // Função para submeter o formulário automaticamente
     function autoSubmit() {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
             form.submit();
-        }, 500); // Espera 500ms após o usuário parar de digitar
+        }, 500);
     }
 
-    // Event listeners para filtros dinâmicos
     searchInput.addEventListener('input', autoSubmit);
     categorySelect.addEventListener('change', () => {
         form.submit();
@@ -160,7 +160,6 @@
         form.submit();
     });
 
-    // Feedback visual ao filtrar
     let isFiltering = false;
     form.addEventListener('submit', () => {
         if (!isFiltering) {
@@ -209,7 +208,6 @@
         animation: spin 1s linear infinite;
     }
 
-    /* Melhorar visual dos filtros */
     #searchInput:focus,
     #categorySelect:focus,
     #statusSelect:focus {
@@ -225,6 +223,52 @@
         background: #ef4444;
         color: white;
         border-color: #ef4444;
+    }
+
+    .btn-icon {
+        --size: 36px;
+        width: var(--size);
+        height: var(--size);
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 1.1rem;
+        line-height: 1;
+        transition: all 0.15s ease;
+        border: none;
+        background: #f9fafb;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .btn-icon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    }
+    .btn-icon:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+    }
+    .btn-outline-info {
+        color: #fff;
+        background: linear-gradient(135deg, #5bd1e1 0%, #0ea5b7 100%);
+    }
+    .btn-outline-info:hover {
+        background: linear-gradient(135deg, #3ec4d8 0%, #0d94a0 100%);
+    }
+    .btn-outline-warning {
+        color: #fff;
+        background: linear-gradient(135deg, #f7b267 0%, #f59e0b 100%);
+    }
+    .btn-outline-warning:hover {
+        background: linear-gradient(135deg, #f5a24d 0%, #d97706 100%);
+    }
+    .btn-outline-danger {
+        color: #fff;
+        background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    }
+    .btn-outline-danger:hover {
+        background: linear-gradient(135deg, #f55555 0%, #dc2626 100%);
     }
 </style>
 @endsection

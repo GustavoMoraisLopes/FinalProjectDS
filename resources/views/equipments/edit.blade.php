@@ -53,9 +53,39 @@
                 </h5>
             </div>
             <div class="card-body">
-                <form action="{{ route('equipments.update', $equipment) }}" method="POST">
+                <form action="{{ route('equipments.update', $equipment) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
+
+                    <!-- Upload de Imagem -->
+                    <div class="mb-4">
+                        <label class="form-label">Foto do Equipamento</label>
+                        <div class="text-center">
+                            @if($equipment->image)
+                                <img src="{{ asset('storage/' . $equipment->image) }}" alt="Imagem" class="equipment-preview rounded mb-3" id="equipmentImagePreview" style="max-height: 150px;">
+                            @else
+                                <div class="equipment-preview-placeholder rounded mb-3 mx-auto" id="equipmentImagePreviewPlaceholder" style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 8px;">
+                                    <i class="bi bi-image" style="font-size: 3rem; color: #9ca3af;"></i>
+                                </div>
+                                <img src="" alt="Imagem" class="equipment-preview rounded mb-3 d-none" id="equipmentImagePreview">
+                            @endif
+                        </div>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <label for="image" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-upload"></i> Escolher Foto
+                            </label>
+                            <input type="file" class="d-none @error('image') is-invalid @enderror" id="image" name="image" accept="image/*" onchange="previewEquipmentImage(event)">
+                            @if($equipment->image)
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEquipmentImage()">
+                                    <i class="bi bi-trash"></i> Remover
+                                </button>
+                            @endif
+                        </div>
+                        <small class="text-muted d-block mt-2">JPG, PNG ou GIF (máx. 2MB)</small>
+                        @error('image')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                    </div>
+
+                    <hr class="mb-3">
 
                     <!-- Informação Básica -->
                     <h6 class="text-muted mb-3">
@@ -200,7 +230,32 @@
         const categorySelect = document.getElementById('category_id');
         const category = categorySelect.options[categorySelect.selectedIndex]?.text || '-';
         document.getElementById('preview-category').textContent = category;
+    }
 
+    function previewEquipmentImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('equipmentImagePreview');
+                const placeholder = document.getElementById('equipmentImagePreviewPlaceholder');
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+                if (placeholder) placeholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function removeEquipmentImage() {
+        const form = document.querySelector('form');
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'remove_image';
+        input.value = '1';
+        form.appendChild(input);
+        form.submit();
+    }
         // Localização
         const location = document.getElementById('location').value || '-';
         document.getElementById('preview-location').textContent = location;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Equipment;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EquipmentController extends Controller
 {
@@ -90,7 +91,25 @@ class EquipmentController extends Controller
             'description' => 'nullable|string',
             'purchase_date' => 'nullable|date',
             'purchase_price' => 'nullable|numeric',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        // Remover imagem se solicitado
+        if ($request->has('remove_image')) {
+            if ($equipment->image && Storage::disk('public')->exists($equipment->image)) {
+                Storage::disk('public')->delete($equipment->image);
+            }
+            $equipment->update(['image' => null]);
+            return redirect()->route('equipments.edit', $equipment)->with('success', 'Foto removida com sucesso!');
+        }
+
+        // Upload imagem se fornecido
+        if ($request->hasFile('image')) {
+            if ($equipment->image && Storage::disk('public')->exists($equipment->image)) {
+                Storage::disk('public')->delete($equipment->image);
+            }
+            $validated['image'] = $request->file('image')->store('equipments', 'public');
+        }
 
         $equipment->update($validated);
 
