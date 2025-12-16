@@ -13,6 +13,23 @@
     <!-- Custom CSS -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
+    <!-- Flatpickr CSS (Datepicker) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        /* Tema adaptado às cores do site */
+        .flatpickr-calendar { border: 1px solid #e5e7eb; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        .flatpickr-months .flatpickr-month { color: #1f2937; }
+        .flatpickr-weekdays { background: #f8fafc; }
+        .flatpickr-day.today { border-color: #667eea; }
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange,
+        .flatpickr-day.inRange:hover { background: #667eea; border-color: #667eea; color: #fff; }
+        .flatpickr-day:hover { background: #e5edff; }
+        .flatpickr-monthDropdown-months, .numInputWrapper input { color: #111827; }
+        .flatpickr-day.disabled { color: #9ca3af; }
+    </style>
+
     @stack('styles')
 </head>
 <body>
@@ -129,6 +146,28 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+
+    <script>
+        // Inicializar datepickers globais
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.flatpickr) {
+                flatpickr('.datepicker', {
+                    allowInput: true,
+                    dateFormat: 'd/m/Y',
+                    locale: flatpickr.l10ns.pt
+                });
+                flatpickr('.daterange', {
+                    mode: 'range',
+                    allowInput: true,
+                    dateFormat: 'd/m/Y',
+                    locale: flatpickr.l10ns.pt
+                });
+            }
+        });
+    </script>
 
     <script>
         // Toggle sidebar em mobile

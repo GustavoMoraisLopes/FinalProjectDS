@@ -88,13 +88,13 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="start_date" class="form-label">Data de Início *</label>
-                            <input type="date" class="form-control @error('start_date') is-invalid @enderror" id="start_date" name="start_date" value="{{ old('start_date') }}" required>
+                            <input type="text" class="form-control datepicker @error('start_date') is-invalid @enderror" id="start_date" name="start_date" value="{{ old('start_date') }}" placeholder="dd/mm/aaaa" required>
                             @error('start_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label for="end_date" class="form-label">Data de Fim *</label>
-                            <input type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date" name="end_date" value="{{ old('end_date') }}" required>
+                            <input type="text" class="form-control datepicker @error('end_date') is-invalid @enderror" id="end_date" name="end_date" value="{{ old('end_date') }}" placeholder="dd/mm/aaaa" required>
                             @error('end_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
@@ -157,16 +157,6 @@
     const endInput = document.getElementById('end_date');
     const purposeInput = document.getElementById('purpose');
 
-    function setDateConstraints() {
-        const today = new Date().toISOString().split('T')[0];
-        startInput.min = today;
-        if (startInput.value) {
-            endInput.min = startInput.value;
-        } else {
-            endInput.min = today;
-        }
-    }
-
     function updatePreview() {
         const option = equipmentSelect.options[equipmentSelect.selectedIndex];
         if (option && option.value) {
@@ -205,9 +195,9 @@
             previewLocation.textContent = '-';
         }
 
-        // Dates
-        const start = startInput.value ? new Date(startInput.value).toLocaleDateString() : '-';
-        const end = endInput.value ? new Date(endInput.value).toLocaleDateString() : '-';
+        // Dates (already in dd/mm/aaaa from flatpickr)
+        const start = startInput.value ? startInput.value : '-';
+        const end = endInput.value ? endInput.value : '-';
         previewDates.textContent = `${start} até ${end}`;
 
         // Purpose
@@ -216,18 +206,11 @@
 
     // Event listeners
     equipmentSelect.addEventListener('change', updatePreview);
-    startInput.addEventListener('change', () => {
-        endInput.min = startInput.value || new Date().toISOString().split('T')[0];
-        if (endInput.value && endInput.value < endInput.min) {
-            endInput.value = endInput.min;
-        }
-        updatePreview();
-    });
+    startInput.addEventListener('change', updatePreview);
     endInput.addEventListener('change', updatePreview);
     purposeInput.addEventListener('input', updatePreview);
 
     // Inicializar
-    setDateConstraints();
     updatePreview();
 </script>
 @endsection
