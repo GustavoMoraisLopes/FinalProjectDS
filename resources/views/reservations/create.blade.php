@@ -83,20 +83,15 @@
                     <hr class="my-4">
 
                     <h6 class="text-muted mb-3">
-                        <i class="bi bi-calendar"></i> Datas da Requisição
+                        <i class="bi bi-calendar-range"></i> Datas da Requisição
                     </h6>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="start_date" class="form-label">Data de Início *</label>
-                            <input type="text" class="form-control datepicker @error('start_date') is-invalid @enderror" id="start_date" name="start_date" value="{{ old('start_date') }}" placeholder="dd/mm/aaaa" required>
-                            @error('start_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="end_date" class="form-label">Data de Fim *</label>
-                            <input type="text" class="form-control datepicker @error('end_date') is-invalid @enderror" id="end_date" name="end_date" value="{{ old('end_date') }}" placeholder="dd/mm/aaaa" required>
-                            @error('end_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
+                    <div class="mb-3">
+                        <label for="reservation_range" class="form-label">Intervalo *</label>
+                        <input type="text" class="form-control @error('start_date') is-invalid @enderror @error('end_date') is-invalid @enderror" id="reservation_range" name="reservation_range" value="{{ old('start_date') && old('end_date') ? old('start_date') . ' até ' . old('end_date') : '' }}" placeholder="Selecione o intervalo" required>
+                        <input type="hidden" id="start_date" name="start_date" value="{{ old('start_date') }}">
+                        <input type="hidden" id="end_date" name="end_date" value="{{ old('end_date') }}">
+                        @error('start_date')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                        @error('end_date')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                     </div>
 
                     <hr class="my-4">
@@ -153,6 +148,7 @@
     const previewLocation = document.getElementById('preview-location');
     const previewDates = document.getElementById('preview-dates');
     const previewPurpose = document.getElementById('preview-purpose');
+    const rangeInput = document.getElementById('reservation_range');
     const startInput = document.getElementById('start_date');
     const endInput = document.getElementById('end_date');
     const purposeInput = document.getElementById('purpose');
@@ -195,22 +191,39 @@
             previewLocation.textContent = '-';
         }
 
-        // Dates (already in dd/mm/aaaa from flatpickr)
         const start = startInput.value ? startInput.value : '-';
         const end = endInput.value ? endInput.value : '-';
         previewDates.textContent = `${start} até ${end}`;
 
-        // Purpose
         previewPurpose.textContent = purposeInput.value ? purposeInput.value : '-';
     }
 
-    // Event listeners
     equipmentSelect.addEventListener('change', updatePreview);
-    startInput.addEventListener('change', updatePreview);
-    endInput.addEventListener('change', updatePreview);
+    rangeInput.addEventListener('change', updatePreview);
     purposeInput.addEventListener('input', updatePreview);
 
-    // Inicializar
-    updatePreview();
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.flatpickr && rangeInput) {
+            const fp = flatpickr(rangeInput, {
+                mode: 'range',
+                allowInput: true,
+                dateFormat: 'd/m/Y',
+                locale: flatpickr.l10ns.pt,
+                minDate: 'today',
+                rangeSeparator: ' até ',
+                onChange: function(selectedDates, dateStr) {
+                    startInput.value = selectedDates[0] ? flatpickr.formatDate(selectedDates[0], 'd/m/Y') : '';
+                    endInput.value = selectedDates[1] ? flatpickr.formatDate(selectedDates[1], 'd/m/Y') : '';
+                    rangeInput.value = dateStr;
+                    updatePreview();
+                }
+            });
+
+            if (startInput.value && endInput.value) {
+                fp.setDate([startInput.value, endInput.value], false, 'd/m/Y');
+            }
+        }
+        updatePreview();
+    });
 </script>
 @endsection

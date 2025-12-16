@@ -157,13 +157,15 @@
                 flatpickr('.datepicker', {
                     allowInput: true,
                     dateFormat: 'd/m/Y',
-                    locale: flatpickr.l10ns.pt
+                    locale: flatpickr.l10ns.pt,
+                    minDate: 'today'
                 });
                 flatpickr('.daterange', {
                     mode: 'range',
                     allowInput: true,
                     dateFormat: 'd/m/Y',
-                    locale: flatpickr.l10ns.pt
+                    locale: flatpickr.l10ns.pt,
+                    minDate: 'today'
                 });
             }
         });
