@@ -18,6 +18,7 @@ class Equipment extends Model
         'category_id',
         'serial_number',
         'location',
+        'owner_institution',
         'status',
         'condition',
         'description',

@@ -62,14 +62,22 @@
         const query = searchInput.value.trim();
         if (!query) return;
 
-        fetch('{{ route("scanner.search") }}?query=' + encodeURIComponent(query), {
+        fetch('{{ route("scanner.search") }}', {
+            method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            }
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ query: query })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error('Equipamento não encontrado');
+            return response.json();
+        })
         .then(data => {
             if (data.error) {
+                alert(data.error);
                 showNoResult();
                 return;
             }

@@ -12,6 +12,15 @@ class EquipmentController extends Controller
     {
         $query = Equipment::with('category');
 
+        // Restrição por instituição (não-admin)
+        $user = $request->user();
+        if ($user && !$user->isAdmin()) {
+            $query->where(function($q) use ($user) {
+                $q->where('owner_institution', $user->institution)
+                  ->orWhere('owner_institution', 'shared');
+            });
+        }
+
         // Filtros
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%')
@@ -26,7 +35,7 @@ class EquipmentController extends Controller
             $query->where('status', $request->status);
         }
 
-        $equipments = $query->paginate(10);
+        $equipments = $query->paginate(10)->withQueryString();
         $categories = Category::all();
 
         return view('equipments.index', compact('equipments', 'categories'));
