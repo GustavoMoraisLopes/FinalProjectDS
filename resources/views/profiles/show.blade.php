@@ -232,6 +232,19 @@
                 if (placeholder) {
                     placeholder.classList.add('d-none');
                 }
+
+                // Atualiza também o avatar do cartão da esquerda
+                const leftImg = document.querySelector('.avatar-profile-img');
+                const leftPlaceholder = document.querySelector('.avatar-profile');
+                if (leftImg) {
+                    leftImg.src = e.target.result;
+                } else if (leftPlaceholder) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = 'Avatar';
+                    img.className = 'avatar-profile-img rounded-circle';
+                    leftPlaceholder.replaceWith(img);
+                }
             }
             reader.readAsDataURL(file);
         }

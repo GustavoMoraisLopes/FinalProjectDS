@@ -65,8 +65,12 @@
                     <tr>
                         <td>
                             <div class="d-flex align-items-center">
-                                <div class="equipment-img bg-light me-2 d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-box-seam text-muted"></i>
+                                <div class="equipment-img bg-light me-2 d-flex align-items-center justify-content-center" style="overflow: hidden;">
+                                    @if($equipment->image)
+                                        <img src="{{ asset('storage/' . $equipment->image) }}" alt="{{ $equipment->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    @else
+                                        <i class="bi bi-box-seam text-muted"></i>
+                                    @endif
                                 </div>
                                 <div>
                                     <div class="fw-bold">{{ $equipment->name }}</div>
@@ -223,6 +227,20 @@
         background: #ef4444;
         color: white;
         border-color: #ef4444;
+    }
+
+    .equipment-img {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex: 0 0 44px;
+    }
+    .equipment-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
     }
 
     .btn-icon {

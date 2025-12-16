@@ -62,12 +62,12 @@
                         <label class="form-label">Foto do Equipamento</label>
                         <div class="text-center">
                             @if($equipment->image)
-                                <img src="{{ asset('storage/' . $equipment->image) }}" alt="Imagem" class="equipment-preview rounded mb-3" id="equipmentImagePreview" style="max-height: 150px;">
+                                <img src="{{ asset('storage/' . $equipment->image) }}" alt="Imagem" class="equipment-preview rounded mb-3" id="equipmentImagePreview" style="width: 180px; height: 180px; object-fit: cover;">
                             @else
-                                <div class="equipment-preview-placeholder rounded mb-3 mx-auto" id="equipmentImagePreviewPlaceholder" style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 8px;">
+                                <div class="equipment-preview-placeholder rounded mb-3 mx-auto" id="equipmentImagePreviewPlaceholder" style="width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 8px;">
                                     <i class="bi bi-image" style="font-size: 3rem; color: #9ca3af;"></i>
                                 </div>
-                                <img src="" alt="Imagem" class="equipment-preview rounded mb-3 d-none" id="equipmentImagePreview">
+                                <img src="" alt="Imagem" class="equipment-preview rounded mb-3 d-none" id="equipmentImagePreview" style="width: 180px; height: 180px; object-fit: cover;">
                             @endif
                         </div>
                         <div class="d-flex gap-2 justify-content-center">
@@ -218,58 +218,26 @@
 
 <script>
     function updatePreview() {
-        // Nome
-        const name = document.getElementById('name').value || '-';
-        document.getElementById('preview-name').textContent = name;
+        const nameVal = document.getElementById('name')?.value || '-';
+        document.getElementById('preview-name').textContent = nameVal;
 
-        // Série
-        const serial = document.getElementById('serial_number').value || '-';
-        document.getElementById('preview-serial').textContent = serial;
+        const serialVal = document.getElementById('serial_number')?.value || '-';
+        document.getElementById('preview-serial').textContent = serialVal;
 
-        // Categoria
         const categorySelect = document.getElementById('category_id');
-        const category = categorySelect.options[categorySelect.selectedIndex]?.text || '-';
-        document.getElementById('preview-category').textContent = category;
-    }
+        const categoryText = categorySelect?.options[categorySelect.selectedIndex]?.text || '-';
+        document.getElementById('preview-category').textContent = categoryText;
 
-    function previewEquipmentImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.getElementById('equipmentImagePreview');
-                const placeholder = document.getElementById('equipmentImagePreviewPlaceholder');
-                preview.src = e.target.result;
-                preview.classList.remove('d-none');
-                if (placeholder) placeholder.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        }
-    }
+        const locVal = document.getElementById('location')?.value || '-';
+        document.getElementById('preview-location').textContent = locVal;
 
-    function removeEquipmentImage() {
-        const form = document.querySelector('form');
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'remove_image';
-        input.value = '1';
-        form.appendChild(input);
-        form.submit();
-    }
-        // Localização
-        const location = document.getElementById('location').value || '-';
-        document.getElementById('preview-location').textContent = location;
-
-        // Estado
         const statusSelect = document.getElementById('status');
-        const status = statusSelect.value;
-        const statusText = statusSelect.options[statusSelect.selectedIndex]?.text || '-';
+        const status = statusSelect?.value || '';
+        const statusText = statusSelect?.options[statusSelect.selectedIndex]?.text || '-';
         const statusBadge = document.getElementById('preview-status');
-
         statusBadge.textContent = statusText;
         statusBadge.className = 'badge';
-
-        switch(status) {
+        switch (status) {
             case 'available':
                 statusBadge.classList.add('bg-success');
                 break;
@@ -282,6 +250,32 @@
             default:
                 statusBadge.classList.add('bg-secondary');
         }
+    }
+
+    function previewEquipmentImage(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const preview = document.getElementById('equipmentImagePreview');
+            const placeholder = document.getElementById('equipmentImagePreviewPlaceholder');
+            if (preview) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            }
+            if (placeholder) placeholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeEquipmentImage() {
+        const form = document.querySelector('form');
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'remove_image';
+        input.value = '1';
+        form.appendChild(input);
+        form.submit();
     }
 </script>
 @endsection
