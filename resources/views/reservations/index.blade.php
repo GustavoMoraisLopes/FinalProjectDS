@@ -73,6 +73,14 @@
                             <i class="bi bi-check"></i> Aprovar
                         </button>
                     </form>
+                    <form action="{{ route('reservations.update', $reservation) }}" method="POST" class="d-inline" style="flex: 1;" onsubmit="return confirm('Rejeitar esta requisição?');">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="status" value="cancelled">
+                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                            <i class="bi bi-x"></i> Rejeitar
+                        </button>
+                    </form>
                     @endif
                 </div>
             </div>

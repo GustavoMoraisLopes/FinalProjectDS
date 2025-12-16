@@ -82,6 +82,14 @@
                                 <i class="bi bi-check-circle"></i> Aprovar
                             </button>
                         </form>
+                        <form action="{{ route('reservations.update', $reservation) }}" method="POST" class="d-inline" onsubmit="return confirm('Rejeitar esta requisição?');">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="status" value="cancelled">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="bi bi-x-circle"></i> Rejeitar
+                            </button>
+                        </form>
                         @endif
 
                         @if($reservation->status == 'approved' && !$reservation->checked_out_at)
