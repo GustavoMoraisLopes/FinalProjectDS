@@ -95,13 +95,14 @@
 
     .split-screen {
         display: flex;
+        flex-direction: row-reverse;
         min-height: 100vh;
         background: #fff;
         position: relative;
         overflow: hidden;
     }
 
-    /* Círculo grande que substitui o background do lado esquerdo */
+    /* Círculo grande no lado direito (login invertido) */
     .split-screen::before {
         content: '';
         position: absolute;
@@ -110,7 +111,7 @@
         background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
         border-radius: 50%;
         top: 50%;
-        left: -75%;
+        right: -75%;
         transform: translateY(-50%);
         z-index: 1;
         transition: 1.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -242,7 +243,7 @@
         padding: 3rem 2rem;
         position: relative;
         z-index: 2;
-        clip-path: ellipse(100% 100% at 100% 50%);
+        clip-path: ellipse(100% 100% at 0% 50%);
     }
 
     .form-wrapper {
