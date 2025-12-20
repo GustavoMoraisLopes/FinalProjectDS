@@ -11,8 +11,15 @@
                 <i class="bi bi-box-seam"></i>
                 <h1>LabStock</h1>
             </div>
-            <h2>Novo por aqui?</h2>
-            <p>Junte-se ao sistema de gestão de inventário mais eficiente.</p>
+            <h2>Já faz parte da equipa?</h2>
+            <p>Aceda ao sistema de gestão de inventário e equipamentos.</p>
+
+            <!-- Botão Mobile Toggle -->
+            <button type="button" class="btn-mobile-toggle" id="mobileToggleBtn" style="display: none;">
+                <i class="bi bi-box-arrow-in-right me-2"></i>
+                ENTRAR
+            </button>
+
             <div class="features">
                 <div class="feature-badge">
                     <i class="bi bi-check-circle-fill"></i>
@@ -409,22 +416,66 @@
         }
     }
 
+    /* Botão Mobile Toggle */
+    .btn-mobile-toggle {
+        width: 100%;
+        max-width: 300px;
+        padding: 1rem 2rem;
+        background: white;
+        color: #3498db;
+        border: 2px solid white;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 2rem auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-mobile-toggle:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-mobile-toggle i {
+        font-size: 1.2rem;
+    }
+
     /* ===================== RESPONSIVE ===================== */
     @media (max-width: 992px) {
         .split-screen {
             flex-direction: column;
         }
 
+        .split-screen::before {
+            display: none;
+        }
+
+        .btn-mobile-toggle {
+            display: flex !important;
+        }
+
         .split-right-register-form {
             clip-path: none;
             order: 2;
             padding: 2rem 1.5rem;
+            display: none;
+        }
+
+        .split-right-register-form.active {
+            display: flex;
         }
 
         .split-left-register {
             order: 1;
             padding: 2rem 1.5rem;
-            min-height: auto;
+            min-height: 60vh;
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
         }
 
         .split-left-register .logo-main h1 {
@@ -465,4 +516,21 @@
         }
     }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('mobileToggleBtn');
+    const formSection = document.querySelector('.split-right-register-form');
+
+    if (toggleBtn && formSection) {
+        toggleBtn.addEventListener('click', function() {
+            formSection.classList.toggle('active');
+
+            if (formSection.classList.contains('active')) {
+                formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+});
+</script>
 @endsection
