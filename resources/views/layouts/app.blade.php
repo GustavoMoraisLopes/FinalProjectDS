@@ -95,10 +95,10 @@
                         </div>
                     </div>
                 </a>
-                <form action="{{ route('logout') }}" method="POST" class="mt-2 px-3">
+                <form action="{{ route('logout') }}" method="POST" class="mt-2 px-3 pb-3">
                     @csrf
-                    <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none">
-                        <i class="bi bi-box-arrow-left"></i> Sair
+                    <button type="submit" class="btn btn-logout w-100">
+                        <i class="bi bi-box-arrow-left me-2"></i> Sair da Sessão
                     </button>
                 </form>
             </div>

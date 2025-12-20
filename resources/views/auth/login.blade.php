@@ -73,6 +73,12 @@
                            placeholder="Palavra-passe" required>
                 </div>
 
+                <div class="forgot-password-container">
+                    <a href="#" class="forgot-password-link" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                        <i class="bi bi-question-circle me-1"></i>Esqueceu a palavra-passe?
+                    </a>
+                </div>
+
                 <div class="form-check mb-4">
                     <input type="checkbox" class="form-check-input" id="remember" name="remember">
                     <label class="form-check-label" for="remember">Manter sessão iniciada</label>
@@ -313,6 +319,36 @@
         color: #bdc3c7;
     }
 
+    .forgot-password-container {
+        text-align: right;
+        margin: -0.75rem 0 1rem 0;
+    }
+
+    .forgot-password-link {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.95rem;
+        color: #3498db;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        gap: 0.5rem;
+    }
+
+    .forgot-password-link:hover {
+        color: #2980b9;
+        transform: translateX(2px);
+    }
+
+    .forgot-password-link i {
+        font-size: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .forgot-password-link:hover i {
+        transform: scale(1.15);
+    }
+
     .btn-submit {
         width: 100%;
         padding: 1rem;
@@ -503,6 +539,10 @@
         .circle-3 {
             display: none;
         }
+
+        .forgot-password-link {
+            font-size: 0.9rem;
+        }
     }
 
     @media (max-width: 576px) {
@@ -533,4 +573,120 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<!-- Modal Forgot Password -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content forgot-password-modal">
+            <div class="modal-header forgot-password-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-shield-question me-2"></i>Recuperar Palavra-passe
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-3">Digite o seu email para receber um link de recuperação de palavra-passe.</p>
+                <form id="forgotPasswordForm">
+                    <div class="input-group-custom mb-3">
+                        <i class="bi bi-envelope-fill input-icon"></i>
+                        <input type="email" class="form-input" id="forgotEmail" name="email"
+                               placeholder="Email" required>
+                    </div>
+                    <button type="submit" class="btn-submit w-100">
+                        <i class="bi bi-send me-2"></i>Enviar Link
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .forgot-password-modal {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .forgot-password-header {
+        background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+        color: white;
+        border: none;
+        border-radius: 15px 15px 0 0;
+        padding: 1.5rem;
+    }
+
+    .forgot-password-modal .modal-body {
+        padding: 2rem;
+    }
+
+    .forgot-password-modal .text-muted {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+</style>
+
+<script>
+    document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('forgotEmail').value;
+        const button = this.querySelector('button[type="submit"]');
+        const originalText = button.innerHTML;
+
+        // Mostrar loading
+        button.disabled = true;
+        button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Enviando...';
+
+        fetch('{{ route("password.email") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            button.disabled = false;
+            button.innerHTML = originalText;
+
+            if (data.success) {
+                // Mostrar mensagem de sucesso
+                const modalBody = document.querySelector('#forgotPasswordModal .modal-body');
+                const successMessage = document.createElement('div');
+                successMessage.className = 'alert alert-success alert-dismissible fade show';
+                successMessage.innerHTML = `
+                    <i class="bi bi-check-circle me-2"></i>${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                modalBody.insertBefore(successMessage, modalBody.firstChild);
+
+                document.getElementById('forgotPasswordForm').reset();
+
+                // Fechar o modal após 3 segundos
+                setTimeout(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal')).hide();
+                }, 3000);
+            } else {
+                // Mostrar erro
+                const modalBody = document.querySelector('#forgotPasswordModal .modal-body');
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'alert alert-danger alert-dismissible fade show';
+                errorMessage.innerHTML = `
+                    <i class="bi bi-exclamation-circle me-2"></i>${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                modalBody.insertBefore(errorMessage, modalBody.firstChild);
+            }
+        })
+        .catch(error => {
+            button.disabled = false;
+            button.innerHTML = originalText;
+            console.error('Erro:', error);
+            alert('Ocorreu um erro ao enviar o email. Tente novamente.');
+        });
+    });
+</script>
+
 @endsection
+
