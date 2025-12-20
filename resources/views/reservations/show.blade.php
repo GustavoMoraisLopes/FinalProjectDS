@@ -109,6 +109,14 @@
                             </button>
                         </form>
                         @endif
+                    @elseif($reservation->user_id === auth()->id() && $reservation->status == 'pending')
+                        <form action="{{ route('reservations.destroy', $reservation) }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja cancelar esta requisição?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Cancelar Requisição
+                            </button>
+                        </form>
                     @endif
                 </div>
             </div>

@@ -6,6 +6,8 @@ use App\Models\Equipment;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+use App\Services\AuditLogger;
 
 class EquipmentController extends Controller
 {
@@ -58,11 +60,24 @@ class EquipmentController extends Controller
             'status' => 'required|in:available,maintenance,loaned,unavailable',
             'condition' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'purchase_date' => 'nullable|date',
+            'purchase_date' => 'nullable|date_format:d/m/Y',
             'purchase_price' => 'nullable|numeric',
         ]);
 
-        Equipment::create($validated);
+        // Converter data de compra de dd/m/Y para Y-m-d se fornecida
+        if (!empty($validated['purchase_date'])) {
+            $validated['purchase_date'] = Carbon::createFromFormat('d/m/Y', $validated['purchase_date'])->format('Y-m-d');
+        }
+
+        $equipment = Equipment::create($validated);
+
+        AuditLogger::log(
+            'equipment.created',
+            $equipment,
+            'Equipamento criado',
+            null,
+            $equipment->toArray()
+        );
 
         return redirect()->route('equipments.index')->with('success', 'Equipamento adicionado com sucesso!');
     }
@@ -89,10 +104,15 @@ class EquipmentController extends Controller
             'status' => 'required|in:available,maintenance,loaned,unavailable',
             'condition' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'purchase_date' => 'nullable|date',
+            'purchase_date' => 'nullable|date_format:d/m/Y',
             'purchase_price' => 'nullable|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        // Converter data de compra de dd/m/Y para Y-m-d se fornecida
+        if (!empty($validated['purchase_date'])) {
+            $validated['purchase_date'] = Carbon::createFromFormat('d/m/Y', $validated['purchase_date'])->format('Y-m-d');
+        }
 
         // Remover imagem se solicitado
         if ($request->has('remove_image')) {
@@ -100,6 +120,7 @@ class EquipmentController extends Controller
                 Storage::disk('public')->delete($equipment->image);
             }
             $equipment->update(['image' => null]);
+            AuditLogger::log('equipment.image_removed', $equipment, 'Imagem do equipamento removida');
             return redirect()->route('equipments.edit', $equipment)->with('success', 'Foto removida com sucesso!');
         }
 
@@ -111,14 +132,19 @@ class EquipmentController extends Controller
             $validated['image'] = $request->file('image')->store('equipments', 'public');
         }
 
+        $old = $equipment->only(array_keys($validated));
         $equipment->update($validated);
+        $new = $equipment->only(array_keys($validated));
+        AuditLogger::log('equipment.updated', $equipment, 'Equipamento atualizado', $old, $new);
 
         return redirect()->route('equipments.index')->with('success', 'Equipamento atualizado com sucesso!');
     }
 
     public function destroy(Equipment $equipment)
     {
+        $snapshot = $equipment->toArray();
         $equipment->delete();
+        AuditLogger::log('equipment.deleted', $equipment, 'Equipamento removido', $snapshot, null);
         return redirect()->route('equipments.index')->with('success', 'Equipamento removido com sucesso!');
     }
 }

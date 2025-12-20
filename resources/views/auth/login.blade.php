@@ -3,310 +3,464 @@
 @section('title', 'Login')
 
 @section('content')
-<div class="login-wrapper">
-    <div class="login-container">
-        <!-- Info Panel -->
-        <div class="login-side-panel">
-            <div class="panel-content">
-                <div class="logo-section">
-                    <i class="bi bi-box-seam"></i>
-                    <h2>LabStock</h2>
+<div class="split-screen" data-page="login">
+    <!-- Lado Esquerdo - Info (igual ao register) -->
+    <div class="split-left-register">
+        <div class="info-content">
+            <div class="logo-main">
+                <i class="bi bi-box-seam"></i>
+                <h1>LabStock</h1>
+            </div>
+            <h2>Novo por aqui?</h2>
+            <p>Junte-se ao sistema de gestão de inventário mais eficiente.</p>
+            <div class="features">
+                <div class="feature-badge">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Acesso rápido</span>
                 </div>
-                <h3>Bem-vindo ao Sistema de Gestão de Inventário</h3>
-                <p>Gerencie equipamentos, requisições e utilizadores de forma eficiente e centralizada.</p>
-                <div class="features-list">
-                    <div class="feature-item">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span>Gestão de equipamentos</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span>Requisições simplificadas</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span>Auditoria completa</span>
-                    </div>
+                <div class="feature-badge">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Gestão simples</span>
+                </div>
+                <div class="feature-badge">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Histórico completo</span>
                 </div>
             </div>
         </div>
+        <div class="decorative-circle circle-1"></div>
+        <div class="decorative-circle circle-2"></div>
+        <div class="decorative-circle circle-3"></div>
+    </div>
 
-        <!-- Login Form -->
-        <div class="login-form-panel">
-            <div class="form-content">
-                <div class="text-center mb-4">
-                    <h4 class="fw-bold mb-2">Iniciar Sessão</h4>
-                    <p class="text-muted">Introduza as suas credenciais</p>
+    <!-- Lado Direito - Formulário (apenas difere o formulário) -->
+    <div class="split-right-register-form">
+        <div class="form-wrapper">
+            <h2 class="form-title">Iniciar Sessão</h2>
+            <p class="form-subtitle">Entre na sua conta</p>
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('login') }}" class="auth-form">
+                @csrf
+
+                <div class="input-group-custom">
+                    <i class="bi bi-envelope-fill input-icon"></i>
+                    <input type="email" class="form-input" id="email" name="email"
+                           value="{{ old('email') }}" placeholder="Email" required autofocus>
                 </div>
 
-                @if ($errors->any())
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('login') }}" class="login-form">
-                    @csrf
-
-                    <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" placeholder="nome@exemplo.com" required autofocus>
-                        <label for="email"><i class="bi bi-envelope me-2"></i>Email</label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                        <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
-                    </div>
-
-                    <div class="mb-4 form-check">
-                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                        <label class="form-check-label" for="remember">
-                            Manter sessão iniciada
-                        </label>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100 btn-login">
-                        <span>Entrar</span>
-                        <i class="bi bi-arrow-right-circle ms-2"></i>
-                    </button>
-                </form>
-
-                <div class="text-center mt-4">
-                    <p class="text-muted mb-0">
-                        Não tem conta? <a href="{{ route('register') }}" class="link-primary fw-semibold">Criar conta</a>
-                    </p>
+                <div class="input-group-custom">
+                    <i class="bi bi-lock-fill input-icon"></i>
+                    <input type="password" class="form-input" id="password" name="password"
+                           placeholder="Palavra-passe" required>
                 </div>
-            </div>
+
+                <div class="form-check mb-4">
+                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                    <label class="form-check-label" for="remember">Manter sessão iniciada</label>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    ENTRAR
+                </button>
+
+                <div class="form-footer">
+                    <p>Não tem conta? <a href="{{ route('register') }}" class="link-auth">Criar conta</a></p>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <style>
-    .login-wrapper {
+    .register-wrapper {
         min-height: 100vh;
         display: flex;
         align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        padding: 2rem 1rem;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .split-screen {
+        display: flex;
+        min-height: 100vh;
+        background: #fff;
         position: relative;
         overflow: hidden;
     }
 
-    .login-wrapper::before {
+    /* Círculo grande que substitui o background do lado esquerdo */
+    .split-screen::before {
         content: '';
         position: absolute;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-        background-size: 30px 30px;
-        animation: backgroundMove 20s linear infinite;
-    }
-
-    @keyframes backgroundMove {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(30px, 30px); }
-    }
-
-    .login-container {
-        display: flex;
-        max-width: 1100px;
-        width: 100%;
-        background: white;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
-        animation: slideUp 0.5s ease-out;
-        position: relative;
+        width: 150%;
+        height: 150%;
+        background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+        border-radius: 50%;
+        top: 50%;
+        left: -75%;
+        transform: translateY(-50%);
         z-index: 1;
+        transition: 1.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        pointer-events: none;
     }
 
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .login-side-panel {
+    /* ===================== LADO ESQUERDO - INFO ===================== */
+    .split-left-register {
         flex: 1;
-        background: linear-gradient(135deg, #6f9db4 0%, #5a8399 100%);
-        padding: 3rem;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .login-side-panel::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        animation: pulse 8s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.5; }
-        50% { transform: scale(1.1); opacity: 0.8; }
-    }
-
-    .panel-content {
-        position: relative;
-        z-index: 1;
-    }
-
-    .logo-section {
+        background: transparent;
         display: flex;
         align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        padding: 3rem;
+        z-index: 2;
+    }
+
+    .split-left-register .info-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: white;
+        animation: fadeIn 0.8s ease-out 0.3s both;
+    }
+
+    .split-left-register .logo-main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 1rem;
         margin-bottom: 2rem;
+        animation: pulse 2s ease-in-out infinite;
     }
 
-    .logo-section i {
-        font-size: 3rem;
-        animation: rotate 3s linear infinite;
+    .split-left-register .logo-main i {
+        font-size: 3.5rem;
     }
 
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .logo-section h2 {
-        font-size: 2rem;
+    .split-left-register .logo-main h1 {
+        font-size: 2.5rem;
         font-weight: 700;
         margin: 0;
     }
 
-    .login-side-panel h3 {
-        font-size: 1.75rem;
+    .split-left-register h2 {
+        font-size: 2rem;
         font-weight: 600;
         margin-bottom: 1rem;
-        line-height: 1.3;
     }
 
-    .login-side-panel p {
-        font-size: 1rem;
-        opacity: 0.95;
+    .split-left-register p {
+        font-size: 1.1rem;
+        opacity: 0.9;
         margin-bottom: 2rem;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    .features-list {
+    .split-left-register .features {
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        align-items: center;
     }
 
-    .feature-item {
+    .split-left-register .feature-badge {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        font-size: 0.95rem;
-        opacity: 0.95;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
     }
 
-    .feature-item i {
+    .split-left-register .feature-badge:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(5px);
+    }
+
+    .split-left-register .feature-badge i {
         font-size: 1.2rem;
-        color: #9edbb3;
+        color: #2ecc71;
     }
 
-    .login-form-panel {
+    /* Círculos decorativos */
+    .decorative-circle {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        pointer-events: none;
+    }
+
+    .circle-1 {
+        width: 300px;
+        height: 300px;
+        top: -100px;
+        right: -100px;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .circle-2 {
+        width: 200px;
+        height: 200px;
+        bottom: -50px;
+        left: -50px;
+        animation: float 8s ease-in-out infinite reverse;
+    }
+
+    .circle-3 {
+        width: 150px;
+        height: 150px;
+        top: 50%;
+        left: 10%;
+        animation: float 7s ease-in-out infinite;
+    }
+
+    /* ===================== LADO DIREITO - FORMULÁRIO ===================== */
+    .split-right-register-form {
         flex: 1;
-        padding: 3rem;
-        display: flex;
-        align-items: center;
-    }
-
-    .form-content {
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto;
-    }
-
-    .login-form .form-floating > .form-control {
-        border-radius: 12px;
-        border: 2px solid #e9ecef;
-        padding: 1rem 1rem 1rem 3rem;
-        height: 58px;
-        transition: all 0.3s ease;
-    }
-
-    .login-form .form-floating > .form-control:focus {
-        border-color: #6f9db4;
-        box-shadow: 0 0 0 0.25rem rgba(111, 157, 180, 0.15);
-    }
-
-    .login-form .form-floating > label {
-        padding-left: 3rem;
-        color: #6c757d;
-    }
-
-    .btn-login {
-        height: 56px;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 1.05rem;
-        background: linear-gradient(135deg, #6f9db4 0%, #5a8399 100%);
-        border: none;
-        transition: all 0.3s ease;
+        background: #f8f9fa;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 3rem 2rem;
+        position: relative;
+        z-index: 2;
+        clip-path: ellipse(100% 100% at 100% 50%);
     }
 
-    .btn-login:hover {
+    .form-wrapper {
+        width: 100%;
+        max-width: 480px;
+        animation: slideInLeft 0.6s ease-out;
+    }
+
+    .form-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        color: #7f8c8d;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+    }
+
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .input-group-custom {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 1.25rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 1rem 1.25rem 1rem 3.25rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 50px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+        outline: none;
+    }
+
+    .form-input:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .form-input::placeholder {
+        color: #bdc3c7;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 24px rgba(111, 157, 180, 0.3);
-        background: linear-gradient(135deg, #5a8399 0%, #6f9db4 100%);
+        box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
     }
 
-    .btn-login:active {
+    .btn-submit:active {
         transform: translateY(0);
     }
 
-    .form-check-input:checked {
-        background-color: #6f9db4;
-        border-color: #6f9db4;
+    .form-footer {
+        text-align: center;
+        margin-top: 1.5rem;
     }
 
-    .link-primary {
-        color: #6f9db4 !important;
+    .form-footer p {
+        color: #7f8c8d;
+        font-size: 0.95rem;
+    }
+
+    .link-auth {
+        color: #3498db;
         text-decoration: none;
+        font-weight: 600;
         transition: color 0.2s ease;
     }
 
-    .link-primary:hover {
-        color: #5a8399 !important;
+    .link-auth:hover {
+        color: #2c3e50;
         text-decoration: underline;
     }
 
-    @media (max-width: 768px) {
-        .login-side-panel {
-            display: none;
+    /* Alertas */
+    .alert {
+        border-radius: 15px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        border: none;
+    }
+
+    .alert ul {
+        padding-left: 1.25rem;
+        margin-bottom: 0;
+    }
+
+    .alert-danger {
+        background: #fee;
+        color: #c33;
+    }
+
+    /* ===================== ANIMAÇÕES ===================== */
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-20px) rotate(5deg);
+        }
+    }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 992px) {
+        .split-screen {
+            flex-direction: column;
         }
 
-        .login-form-panel {
+        .split-right-register-form {
+            clip-path: none;
+            order: 2;
             padding: 2rem 1.5rem;
         }
 
-        .login-container {
-            border-radius: 16px;
+        .split-left-register {
+            order: 1;
+            padding: 2rem 1.5rem;
+            min-height: auto;
+        }
+
+        .split-left-register .logo-main h1 {
+            font-size: 2rem;
+        }
+
+        .split-left-register .logo-main i {
+            font-size: 2.5rem;
+        }
+
+        .split-left-register h2 {
+            font-size: 1.5rem;
+        }
+
+        .split-left-register p {
+            font-size: 1rem;
+        }
+
+        .form-title {
+            font-size: 1.75rem;
+        }
+
+        .circle-1,
+        .circle-2,
+        .circle-3 {
+            display: none;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .form-wrapper {
+            max-width: 100%;
+        }
+
+        .split-left-register,
+        .split-right-register-form {
+            padding: 1.5rem 1rem;
         }
     }
 </style>

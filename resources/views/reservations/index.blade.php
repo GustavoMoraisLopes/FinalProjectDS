@@ -81,6 +81,14 @@
                             <i class="bi bi-x"></i> Rejeitar
                         </button>
                     </form>
+                    @elseif($reservation->user_id === auth()->id() && $reservation->status == 'pending')
+                    <form action="{{ route('reservations.destroy', $reservation) }}" method="POST" class="d-inline flex-grow-1" onsubmit="return confirm('Tem certeza que deseja cancelar esta requisição?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger w-100">
+                            <i class="bi bi-trash"></i> Cancelar
+                        </button>
+                    </form>
                     @endif
                 </div>
             </div>

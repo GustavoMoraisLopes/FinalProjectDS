@@ -138,7 +138,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="purchase_date" class="form-label">Data de Compra</label>
-                            <input type="text" class="form-control datepicker @error('purchase_date') is-invalid @enderror"
+                            <input type="text" class="form-control datepicker-any @error('purchase_date') is-invalid @enderror"
                                 id="purchase_date" name="purchase_date" value="{{ old('purchase_date') }}" placeholder="dd/mm/aaaa">
                             @error('purchase_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
@@ -231,7 +231,6 @@
         }
     }
 
-    // Atualizar preview ao carregar se houver old values
     document.addEventListener('DOMContentLoaded', updatePreview);
 </script>
 @endsection

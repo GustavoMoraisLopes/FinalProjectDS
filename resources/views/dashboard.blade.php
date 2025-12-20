@@ -99,7 +99,15 @@
                                     </small>
                                 </div>
                                 <span class="badge status-{{ $reservation->status }}">
-                                    {{ ucfirst($reservation->status) }}
+                                    @php
+                                        $statusPt = [
+                                            'pending' => 'Pendente',
+                                            'approved' => 'Aprovada',
+                                            'completed' => 'Completa',
+                                            'cancelled' => 'Cancelada',
+                                        ];
+                                    @endphp
+                                    {{ $statusPt[$reservation->status] ?? ucfirst($reservation->status) }}
                                 </span>
                             </div>
                         </div>

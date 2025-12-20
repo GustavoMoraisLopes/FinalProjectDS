@@ -170,8 +170,9 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="purchase_date" class="form-label">Data de Compra</label>
-                            <input type="text" class="form-control datepicker" id="purchase_date" name="purchase_date"
+                            <input type="text" class="form-control datepicker-any @error('purchase_date') is-invalid @enderror" id="purchase_date" name="purchase_date"
                                 value="{{ old('purchase_date', optional($equipment->purchase_date)->format('d/m/Y')) }}" placeholder="dd/mm/aaaa">
+                            @error('purchase_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
 
                         <div class="col-md-6 mb-3">

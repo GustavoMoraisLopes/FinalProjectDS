@@ -154,12 +154,21 @@
         // Inicializar datepickers globais
         document.addEventListener('DOMContentLoaded', function() {
             if (window.flatpickr) {
+                // Datepicker padrão (com restrição: hoje em diante) - para reservas
                 flatpickr('.datepicker', {
                     allowInput: true,
                     dateFormat: 'd/m/Y',
                     locale: flatpickr.l10ns.pt,
                     minDate: 'today'
                 });
+
+                // Datepicker para datas passadas (sem restrição) - para data de compra
+                flatpickr('.datepicker-any', {
+                    allowInput: true,
+                    dateFormat: 'd/m/Y',
+                    locale: flatpickr.l10ns.pt
+                });
+
                 flatpickr('.daterange', {
                     mode: 'range',
                     allowInput: true,
