@@ -74,15 +74,12 @@
                 </div>
 
                 <div class="input-group-custom">
-                    <i class="bi bi-telephone-fill input-icon"></i>
-                    <input type="text" class="form-input" id="phone" name="phone"
-                           value="{{ old('phone') }}" placeholder="Telefone (Opcional)">
-                </div>
-
-                <div class="input-group-custom">
                     <i class="bi bi-building input-icon"></i>
-                    <input type="text" class="form-input" id="department" name="department"
-                           value="{{ old('department') }}" placeholder="Departamento (Opcional)">
+                    <select class="form-input" id="institution" name="institution" required>
+                        <option value="">Selecione a Instituição</option>
+                        <option value="istec" {{ old('institution') === 'istec' ? 'selected' : '' }}>ISTEC</option>
+                        <option value="ipta" {{ old('institution') === 'ipta' ? 'selected' : '' }}>IPTA</option>
+                    </select>
                 </div>
 
                 <div class="input-group-custom">
@@ -329,6 +326,49 @@
 
     .form-input::placeholder {
         color: #bdc3c7;
+    }
+
+    /* Styling para select/combobox */
+    select.form-input {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237f8c8d' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1.25rem center;
+        background-color: white;
+        padding-right: 2.5rem;
+        font-weight: 500;
+        color: #2c3e50;
+        cursor: pointer;
+    }
+
+    select.form-input option {
+        padding: 0.75rem;
+        background: white;
+        color: #2c3e50;
+        font-size: 1rem;
+    }
+
+    select.form-input option:checked {
+        background: linear-gradient(#3498db, #3498db);
+        background-color: #3498db;
+        color: white;
+    }
+
+    select.form-input:hover {
+        border-color: #3498db;
+    }
+
+    select.form-input:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    select.form-input:disabled {
+        background-color: #ecf0f1;
+        color: #95a5a6;
+        cursor: not-allowed;
     }
 
     .btn-submit {
