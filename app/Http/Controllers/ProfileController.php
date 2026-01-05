@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\ProfileUpdatedNotification;
+use App\Notifications\PasswordChangedNotification;
 
 class ProfileController extends Controller
 {
@@ -32,6 +34,7 @@ class ProfileController extends Controller
                 unlink(public_path('storage/' . $user->avatar));
             }
             $user->update(['avatar' => null]);
+            $user->notify(new ProfileUpdatedNotification('foto de perfil'));
             return redirect()->route('profile.show')->with('success', 'Foto de perfil removida com sucesso!');
         }
 
@@ -48,6 +51,9 @@ class ProfileController extends Controller
 
         $user->update($validated);
 
+        // Send profile updated notification
+        $user->notify(new ProfileUpdatedNotification('perfil'));
+
         return redirect()->route('profile.show')->with('success', 'Perfil atualizado com sucesso!');
     }
 
@@ -61,6 +67,9 @@ class ProfileController extends Controller
         Auth::user()->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        // Send password changed notification
+        Auth::user()->notify(new PasswordChangedNotification());
 
         return redirect()->route('profile.show')->with('success', 'Palavra-passe alterada com sucesso!');
     }

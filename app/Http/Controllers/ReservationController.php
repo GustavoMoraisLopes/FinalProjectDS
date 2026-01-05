@@ -117,7 +117,7 @@ class ReservationController extends Controller
 
         if (isset($old['status']) && $old['status'] !== $new['status']) {
             AuditLogger::log('reservation.status_changed', $reservation, 'Estado da requisição alterado', $old, $new);
-            
+
             // Send notification on status change
             if ($new['status'] === 'approved') {
                 $reservation->user->notify(new ReservationApprovedNotification($reservation));

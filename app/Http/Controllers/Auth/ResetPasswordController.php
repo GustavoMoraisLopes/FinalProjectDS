@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use App\Notifications\PasswordChangedNotification;
+use App\Models\User;
 
 class ResetPasswordController extends Controller
 {
@@ -34,6 +36,9 @@ class ResetPasswordController extends Controller
                     'password' => Hash::make($password),
                     'remember_token' => Str::random(60),
                 ])->save();
+
+                // Send password changed notification
+                $user->notify(new PasswordChangedNotification());
 
                 event(new PasswordReset($user));
             }

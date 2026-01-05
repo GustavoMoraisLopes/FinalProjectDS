@@ -14,22 +14,29 @@ class UserSeeder extends Seeder
     {
         // Admin
         \App\Models\User::create([
-            'name' => 'Ana Silva',
-            'email' => 'ana@lab.pt',
+            'name' => 'Admin ISTEC',
+            'email' => 'admin@my.istec.pt',
             'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'role' => 'admin',
-            'phone' => '912345678',
-            'department' => 'TI',
+            'institution' => 'istec',
         ]);
 
-        // User
+        // User ISTEC
         \App\Models\User::create([
-            'name' => 'João Santos',
-            'email' => 'joao@lab.pt',
+            'name' => 'Gustavo Morais',
+            'email' => 'gustavo@my.istec.pt',
             'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'role' => 'user',
-            'phone' => '918765432',
-            'department' => 'Desenvolvimento',
+            'institution' => 'istec',
+        ]);
+
+        // User IPTA
+        \App\Models\User::create([
+            'name' => 'João Silva',
+            'email' => 'joao@ipta.pt',
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'role' => 'user',
+            'institution' => 'ipta',
         ]);
     }
 }

@@ -27,7 +27,7 @@ class ReservationApprovedNotification extends Notification
         return [
             'icon' => 'check-circle',
             'color' => 'success',
-            'title' => 'Requisição Aprovada',
+            'title' => '✓ Requisição Aprovada',
             'message' => 'A sua requisição do equipamento "' . $this->reservation->equipment->name . '" foi aprovada.',
             'action_url' => route('reservations.show', $this->reservation->id),
             'action_text' => 'Ver requisição',

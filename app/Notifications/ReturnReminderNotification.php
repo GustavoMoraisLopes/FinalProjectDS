@@ -26,8 +26,8 @@ class ReturnReminderNotification extends Notification
 
     public function toDatabase($notifiable)
     {
-        $message = $this->daysLeft == 0 
-            ? 'O equipamento "' . $this->reservation->equipment->name . '" deve ser devolvido hoje!' 
+        $message = $this->daysLeft == 0
+            ? 'O equipamento "' . $this->reservation->equipment->name . '" deve ser devolvido hoje!'
             : 'Falta' . ($this->daysLeft == 1 ? '' : 'm') . ' ' . $this->daysLeft . ' dia' . ($this->daysLeft == 1 ? '' : 's') . ' para devolver o equipamento "' . $this->reservation->equipment->name . '".';
 
         return [
