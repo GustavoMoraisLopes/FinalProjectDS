@@ -7,6 +7,8 @@ use App\Models\Equipment;
 use Illuminate\Http\Request;
 use App\Services\AuditLogger;
 use Carbon\Carbon;
+use App\Notifications\ReservationApprovedNotification;
+use App\Notifications\ReservationRejectedNotification;
 
 class ReservationController extends Controller
 {
@@ -41,8 +43,11 @@ class ReservationController extends Controller
             'equipment_id' => 'required|exists:equipments,id',
             'start_date' => 'required|date_format:d/m/Y',
             'end_date' => 'required|date_format:d/m/Y',
+            'pickup_time' => 'required|date_format:H:i',
+            'return_time' => 'required|date_format:H:i',
             'purpose' => 'nullable|string|max:255',
             'project' => 'nullable|string|max:255',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         $start = Carbon::createFromFormat('d/m/Y', $validated['start_date'])->startOfDay();
@@ -61,7 +66,6 @@ class ReservationController extends Controller
 
         $validated['start_date'] = $start->toDateString();
         $validated['end_date'] = $end->toDateString();
-
         $validated['user_id'] = auth()->id();
         $validated['status'] = 'pending';
 
@@ -76,6 +80,8 @@ class ReservationController extends Controller
                 'equipment_id' => $reservation->equipment_id,
                 'start_date' => $reservation->start_date,
                 'end_date' => $reservation->end_date,
+                'pickup_time' => $reservation->pickup_time,
+                'return_time' => $reservation->return_time,
                 'status' => $reservation->status,
             ]
         );
@@ -111,6 +117,14 @@ class ReservationController extends Controller
 
         if (isset($old['status']) && $old['status'] !== $new['status']) {
             AuditLogger::log('reservation.status_changed', $reservation, 'Estado da requisição alterado', $old, $new);
+            
+            // Send notification on status change
+            if ($new['status'] === 'approved') {
+                $reservation->user->notify(new ReservationApprovedNotification($reservation));
+            } elseif ($new['status'] === 'cancelled') {
+                $reason = $request->input('rejection_reason');
+                $reservation->user->notify(new ReservationRejectedNotification($reservation, $reason));
+            }
         } else {
             AuditLogger::log('reservation.updated', $reservation, 'Requisição atualizada', $old, $new);
         }

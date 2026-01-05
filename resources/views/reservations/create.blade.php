@@ -94,6 +94,19 @@
                         @error('end_date')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="pickup_time" class="form-label">Hora de Levantamento *</label>
+                            <input type="time" class="form-control @error('pickup_time') is-invalid @enderror" id="pickup_time" name="pickup_time" value="{{ old('pickup_time', '09:00') }}" required>
+                            @error('pickup_time')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="return_time" class="form-label">Hora de Devolução *</label>
+                            <input type="time" class="form-control @error('return_time') is-invalid @enderror" id="return_time" name="return_time" value="{{ old('return_time', '17:00') }}" required>
+                            @error('return_time')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+
                     <hr class="my-4">
 
                     <h6 class="text-muted mb-3">
@@ -108,6 +121,12 @@
                     <div class="mb-3">
                         <label for="project" class="form-label">Projeto (Opcional)</label>
                         <input type="text" class="form-control" id="project" name="project" value="{{ old('project') }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Ex: Para projeto da disciplina de Programação Web. Necessito também de um adaptador HDMI.">{{ old('notes') }}</textarea>
+                        <small class="text-muted">Especifique detalhes adicionais, acessórios necessários, disciplina, etc.</small>
                     </div>
 
                     <div class="d-flex gap-2">

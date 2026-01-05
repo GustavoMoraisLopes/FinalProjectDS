@@ -12,6 +12,8 @@ class Reservation extends Model
         'user_id',
         'start_date',
         'end_date',
+        'pickup_time',
+        'return_time',
         'purpose',
         'project',
         'status',
@@ -23,6 +25,8 @@ class Reservation extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
+        'pickup_time' => 'datetime:H:i',
+        'return_time' => 'datetime:H:i',
         'checked_out_at' => 'datetime',
         'checked_in_at' => 'datetime',
     ];

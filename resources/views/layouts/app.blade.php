@@ -67,6 +67,14 @@
                     <span>Scanner</span>
                 </a>
 
+                <a href="{{ route('reminders.index') }}" class="sidebar-link {{ request()->routeIs('reminders.*') ? 'active' : '' }}">
+                    <i class="bi bi-bell"></i>
+                    <span>Lembretes</span>
+                    @if(auth()->user()->unreadNotifications->count() > 0)
+                        <span class="badge bg-danger rounded-pill ms-auto">{{ auth()->user()->unreadNotifications->count() }}</span>
+                    @endif
+                </a>
+
                 @if(auth()->user()->isAdmin())
                 <a href="{{ route('admin.index') }}" class="sidebar-link {{ request()->routeIs('admin.*') ? 'active' : '' }}">
                     <i class="bi bi-shield-lock"></i>

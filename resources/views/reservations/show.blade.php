@@ -43,10 +43,43 @@
                     </div>
                 </div>
 
+                @if($reservation->pickup_time || $reservation->return_time)
+                <div class="row mb-4">
+                    @if($reservation->pickup_time)
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Hora de Levantamento</h6>
+                        <p><i class="bi bi-clock"></i> {{ \Carbon\Carbon::parse($reservation->pickup_time)->format('H:i') }}</p>
+                    </div>
+                    @endif
+                    @if($reservation->return_time)
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Hora de Devolução</h6>
+                        <p><i class="bi bi-clock"></i> {{ \Carbon\Carbon::parse($reservation->return_time)->format('H:i') }}</p>
+                    </div>
+                    @endif
+                </div>
+                @endif
+
                 @if($reservation->purpose)
                 <div class="mb-4">
                     <h6 class="text-muted">Finalidade</h6>
                     <p>{{ $reservation->purpose }}</p>
+                </div>
+                @endif
+
+                @if($reservation->project)
+                <div class="mb-4">
+                    <h6 class="text-muted">Projeto</h6>
+                    <p>{{ $reservation->project }}</p>
+                </div>
+                @endif
+
+                @if($reservation->notes)
+                <div class="mb-4">
+                    <h6 class="text-muted"><i class="bi bi-chat-left-text"></i> Observações</h6>
+                    <div class="p-3 bg-light rounded">
+                        {{ $reservation->notes }}
+                    </div>
                 </div>
                 @endif
 

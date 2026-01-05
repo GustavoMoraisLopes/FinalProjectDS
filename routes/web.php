@@ -11,6 +11,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ScannerController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReminderController;
 
 // Rotas públicas
 Route::get('/', function () {
@@ -39,6 +40,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+
+    // Lembretes
+    Route::get('/reminders', [ReminderController::class, 'index'])->name('reminders.index');
+    Route::post('/reminders/{id}/mark-read', [ReminderController::class, 'markAsRead'])->name('reminders.mark-read');
+    Route::post('/reminders/mark-all-read', [ReminderController::class, 'markAllAsRead'])->name('reminders.mark-all-read');
 
     // Inventário
     Route::resource('equipments', EquipmentController::class);
