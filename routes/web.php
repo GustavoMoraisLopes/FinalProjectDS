@@ -45,6 +45,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reminders', [ReminderController::class, 'index'])->name('reminders.index');
     Route::post('/reminders/{id}/mark-read', [ReminderController::class, 'markAsRead'])->name('reminders.mark-read');
     Route::post('/reminders/mark-all-read', [ReminderController::class, 'markAllAsRead'])->name('reminders.mark-all-read');
+    Route::delete('/reminders/{id}', [ReminderController::class, 'delete'])->name('reminders.delete');
+    Route::post('/reminders/delete-selected', [ReminderController::class, 'deleteSelected'])->name('reminders.delete-selected');
+    Route::post('/reminders/delete-all', [ReminderController::class, 'deleteAll'])->name('reminders.delete-all');
 
     // Inventário
     Route::resource('equipments', EquipmentController::class);

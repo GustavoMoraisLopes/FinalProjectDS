@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Date;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Forçar português em datas relativas (ex: "há 2 dias")
+        app()->setLocale('pt');
+        Carbon::setLocale('pt');
+        Date::setLocale('pt');
     }
 }
