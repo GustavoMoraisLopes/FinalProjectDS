@@ -9,6 +9,7 @@ use App\Services\AuditLogger;
 use Carbon\Carbon;
 use App\Notifications\ReservationApprovedNotification;
 use App\Notifications\ReservationRejectedNotification;
+use App\Notifications\ReturnReminderNotification;
 
 class ReservationController extends Controller
 {
@@ -121,6 +122,11 @@ class ReservationController extends Controller
             // Send notification on status change
             if ($new['status'] === 'approved') {
                 $reservation->user->notify(new ReservationApprovedNotification($reservation));
+                // Marcar equipamento como emprestado imediatamente quando aprovado
+                $reservation->equipment->update(['status' => 'loaned']);
+                $reservation->update(['checked_out_at' => now()]);
+                AuditLogger::log('reservation.checkout', $reservation, 'Equipamento requisitado automaticamente ao aprovar');
+                $this->sendReturnReminderIfClose($reservation);
             } elseif ($new['status'] === 'cancelled') {
                 $reason = $request->input('rejection_reason');
                 $reservation->user->notify(new ReservationRejectedNotification($reservation, $reason));
@@ -154,6 +160,9 @@ class ReservationController extends Controller
         $reservation->equipment->update(['status' => 'loaned']);
         AuditLogger::log('reservation.checkout', $reservation, 'Equipamento requisitado (checkout)');
 
+        // Disparar lembrete imediato se devolução é hoje/amanhã ou já em atraso
+        $this->sendReturnReminderIfClose($reservation);
+
         return redirect()->route('reservations.show', $reservation)->with('success', 'Equipamento requisitado com sucesso!');
     }
 
@@ -170,5 +179,28 @@ class ReservationController extends Controller
         AuditLogger::log('reservation.checkin', $reservation, 'Equipamento devolvido (checkin)');
 
         return redirect()->route('reservations.show', $reservation)->with('success', 'Equipamento devolvido com sucesso!');
+    }
+
+    /**
+     * Envia lembrete imediato se a devolução é hoje/amanhã ou já está em atraso.
+     */
+    private function sendReturnReminderIfClose(Reservation $reservation): void
+    {
+        $today = Carbon::today();
+        $endDate = Carbon::parse($reservation->end_date);
+        $daysLeft = $today->diffInDays($endDate, false); // negativo se atrasado
+
+        if ($daysLeft <= 1) {
+            // Evitar duplicar no mesmo dia
+            $alreadyNotified = $reservation->user->notifications()
+                ->where('type', ReturnReminderNotification::class)
+                ->where('data->reservation_id', $reservation->id)
+                ->whereDate('created_at', $today)
+                ->exists();
+
+            if (!$alreadyNotified) {
+                $reservation->user->notify(new ReturnReminderNotification($reservation, max(0, $daysLeft)));
+            }
+        }
     }
 }

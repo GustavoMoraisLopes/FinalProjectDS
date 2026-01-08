@@ -84,8 +84,11 @@ class EquipmentController extends Controller
 
     public function show(Equipment $equipment)
     {
+        $user = auth()->user();
+        $showReservationHistory = $user && ($user->isAdmin() || $user->role === 'staff');
+
         $equipment->load('category', 'reservations.user');
-        return view('equipments.show', compact('equipment'));
+        return view('equipments.show', compact('equipment', 'showReservationHistory'));
     }
 
     public function edit(Equipment $equipment)

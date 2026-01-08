@@ -105,22 +105,28 @@
                 <h5 class="mb-0">Histórico de Reservas</h5>
             </div>
             <div class="card-body">
-                @if($equipment->reservations->count() > 0)
-                    <div class="list-group list-group-flush">
-                        @foreach($equipment->reservations->take(5) as $reservation)
-                        <div class="list-group-item px-0 py-3">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <small class="text-muted">{{ $reservation->user->name }}</small>
-                                    <p class="mb-1 small">{{ $reservation->start_date->format('d/m/Y') }} a {{ $reservation->end_date->format('d/m/Y') }}</p>
+                @if($showReservationHistory)
+                    @if($equipment->reservations->count() > 0)
+                        <div class="list-group list-group-flush">
+                            @foreach($equipment->reservations->take(5) as $reservation)
+                            <div class="list-group-item px-0 py-3">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <small class="text-muted">{{ $reservation->user->name }}</small>
+                                        <p class="mb-1 small">{{ $reservation->start_date->format('d/m/Y') }} a {{ $reservation->end_date->format('d/m/Y') }}</p>
+                                    </div>
+                                    <span class="badge status-{{ $reservation->status }}">{{ ucfirst($reservation->status) }}</span>
                                 </div>
-                                <span class="badge status-{{ $reservation->status }}">{{ ucfirst($reservation->status) }}</span>
                             </div>
+                            @endforeach
                         </div>
-                        @endforeach
-                    </div>
+                    @else
+                        <p class="text-muted text-center py-3 small">Nenhuma reserva registada</p>
+                    @endif
                 @else
-                    <p class="text-muted text-center py-3 small">Nenhuma reserva registada</p>
+                    <div class="alert alert-warning mb-0">
+                        <i class="bi bi-lock-fill"></i> Apenas administradores e staff podem visualizar o histórico de reservas.
+                    </div>
                 @endif
             </div>
         </div>
