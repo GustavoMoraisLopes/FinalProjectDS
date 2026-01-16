@@ -61,31 +61,31 @@
                 @endif
 
                 <div class="d-flex gap-2 mt-3 pt-3 border-top">
-                    <a href="{{ route('reservations.show', $reservation) }}" class="btn btn-sm btn-outline-primary flex-grow-1">
-                        <i class="bi bi-eye"></i> Ver
+                    <a href="{{ route('reservations.show', $reservation) }}" class="btn btn-sm btn-primary flex-grow-1 action-btn">
+                        <i class="bi bi-eye"></i> Ver Detalhes
                     </a>
                     @if(auth()->user()->isAdmin() && $reservation->status == 'pending')
                     <form action="{{ route('reservations.update', $reservation) }}" method="POST" class="d-inline" style="flex: 1;">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="status" value="approved">
-                        <button type="submit" class="btn btn-sm btn-success w-100">
-                            <i class="bi bi-check"></i> Aprovar
+                        <button type="submit" class="btn btn-sm btn-success w-100 action-btn">
+                            <i class="bi bi-check-circle"></i> Aprovar
                         </button>
                     </form>
                     <form action="{{ route('reservations.update', $reservation) }}" method="POST" class="d-inline" style="flex: 1;" onsubmit="return confirm('Rejeitar esta requisição?');">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="status" value="cancelled">
-                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">
-                            <i class="bi bi-x"></i> Rejeitar
+                        <button type="submit" class="btn btn-sm btn-danger w-100 action-btn">
+                            <i class="bi bi-x-circle"></i> Rejeitar
                         </button>
                     </form>
                     @elseif($reservation->user_id === auth()->id() && $reservation->status == 'pending')
                     <form action="{{ route('reservations.destroy', $reservation) }}" method="POST" class="d-inline flex-grow-1" onsubmit="return confirm('Tem certeza que deseja cancelar esta requisição?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger w-100">
+                        <button type="submit" class="btn btn-sm btn-danger w-100 action-btn">
                             <i class="bi bi-trash"></i> Cancelar
                         </button>
                     </form>
@@ -107,4 +107,29 @@
 <div class="mt-4">
     {{ $reservations->links() }}
 </div>
+
+<style>
+    .action-btn {
+        transition: all 0.15s ease;
+        font-weight: 500;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .action-btn:active {
+        transform: translateY(0);
+    }
+
+    .card {
+        transition: all 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+    }
+</style>
 @endsection
