@@ -37,6 +37,22 @@
                         <strong>Datas:</strong>
                         <div class="text-muted" id="preview-dates">-</div>
                     </div>
+                    <div class="mb-2">
+                        <strong>Instituição:</strong>
+                        <div class="text-muted" id="preview-school">-</div>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Tipo de Curso:</strong>
+                        <div class="text-muted" id="preview-course-type">-</div>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Curso:</strong>
+                        <div class="text-muted" id="preview-course-name">-</div>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Turma:</strong>
+                        <div class="text-muted" id="preview-class-year">-</div>
+                    </div>
                     <div>
                         <strong>Finalidade:</strong>
                         <div class="text-muted" id="preview-purpose">-</div>
@@ -249,6 +265,28 @@
         previewDates.textContent = `${start} até ${end}`;
 
         previewPurpose.textContent = purposeInput.value ? purposeInput.value : '-';
+
+        // Update course preview
+        updateCoursePreview();
+    }
+
+    function updateCoursePreview() {
+        const schoolSelect = document.getElementById('school');
+        const courseTypeSelect = document.getElementById('course_type');
+        const courseNameSelect = document.getElementById('course_name');
+        const classYearSelect = document.getElementById('class_year');
+
+        // Map school values to display names
+        const schoolMap = {
+            'istec': 'ISTEC Porto',
+            'ipta': 'IPTA Porto',
+            'outro': 'Outro'
+        };
+
+        document.getElementById('preview-school').textContent = schoolSelect.value ? schoolMap[schoolSelect.value] : '-';
+        document.getElementById('preview-course-type').textContent = courseTypeSelect.value || '-';
+        document.getElementById('preview-course-name').textContent = courseNameSelect.value || '-';
+        document.getElementById('preview-class-year').textContent = classYearSelect.value || '-';
     }
 
     equipmentSelect.addEventListener('change', updatePreview);
@@ -324,9 +362,19 @@
 
     function initializeCourseSelects() {
         // Set up event listeners
-        schoolSelect.addEventListener('change', updateCourseTypes);
-        courseTypeSelect.addEventListener('change', updateCourseNames);
-        courseNameSelect.addEventListener('change', updateClassYears);
+        schoolSelect.addEventListener('change', function() {
+            updateCourseTypes();
+            updateCoursePreview();
+        });
+        courseTypeSelect.addEventListener('change', function() {
+            updateCourseNames();
+            updateCoursePreview();
+        });
+        courseNameSelect.addEventListener('change', function() {
+            updateClassYears();
+            updateCoursePreview();
+        });
+        classYearSelect.addEventListener('change', updateCoursePreview);
 
         // Initialize if school is already selected (e.g., on form validation error)
         if (schoolSelect.value) {

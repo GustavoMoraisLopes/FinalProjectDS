@@ -60,16 +60,60 @@
                 </div>
                 @endif
 
+                <hr class="my-4">
+
+                <h6 class="text-muted mb-3"><i class="bi bi-book"></i> Contexto Académico</h6>
+                @if($reservation->school || $reservation->course_type || $reservation->course_name || $reservation->class_year)
+                <div class="row mb-4">
+                    @if($reservation->school)
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Instituição</h6>
+                        <p>
+                            @if($reservation->school === 'istec')
+                                ISTEC Porto
+                            @elseif($reservation->school === 'ipta')
+                                IPTA Porto
+                            @else
+                                {{ ucfirst($reservation->school) }}
+                            @endif
+                        </p>
+                    </div>
+                    @endif
+                    @if($reservation->course_type)
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Tipo de Curso</h6>
+                        <p>{{ $reservation->course_type }}</p>
+                    </div>
+                    @endif
+                </div>
+                <div class="row mb-4">
+                    @if($reservation->course_name)
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Curso</h6>
+                        <p>{{ $reservation->course_name }}</p>
+                    </div>
+                    @endif
+                    @if($reservation->class_year)
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Turma / Ano</h6>
+                        <p>{{ $reservation->class_year }}</p>
+                    </div>
+                    @endif
+                </div>
+                @endif
+
+                <hr class="my-4">
+
                 @if($reservation->purpose)
                 <div class="mb-4">
-                    <h6 class="text-muted">Finalidade</h6>
+                    <h6 class="text-muted"><i class="bi bi-bookmark"></i> Finalidade / Descrição</h6>
                     <p>{{ $reservation->purpose }}</p>
                 </div>
                 @endif
 
                 @if($reservation->project)
                 <div class="mb-4">
-                    <h6 class="text-muted">Projeto</h6>
+                    <h6 class="text-muted"><i class="bi bi-folder"></i> Projeto</h6>
                     <p>{{ $reservation->project }}</p>
                 </div>
                 @endif
@@ -119,7 +163,7 @@
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="status" value="cancelled">
-                            <button type="submit" class="btn btn-outline-danger">
+                            <button type="submit" class="btn btn-danger">
                                 <i class="bi bi-x-circle"></i> Rejeitar
                             </button>
                         </form>
