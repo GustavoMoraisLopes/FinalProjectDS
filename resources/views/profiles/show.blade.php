@@ -74,13 +74,13 @@
                             @endif
                         </div>
                         <div class="d-flex gap-2 justify-content-center">
-                            <label for="avatar" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-upload"></i> Escolher Foto
+                            <label for="avatar" class="btn btn-sm btn-primary action-btn">
+                                <i class="bi bi-cloud-upload"></i> Escolher Foto
                             </label>
                             <input type="file" class="d-none @error('avatar') is-invalid @enderror"
                                    id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(event)">
                             @if($user->avatar)
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeAvatar()">
+                                <button type="button" class="btn btn-sm btn-danger action-btn" onclick="removeAvatar()">
                                     <i class="bi bi-trash"></i> Remover
                                 </button>
                             @endif
@@ -129,7 +129,7 @@
                         @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary action-btn">
                         <i class="bi bi-check-circle"></i> Guardar Alterações
                     </button>
                 </form>
@@ -172,7 +172,7 @@
                                name="password_confirmation" required>
                     </div>
 
-                    <button type="submit" class="btn btn-warning">
+                    <button type="submit" class="btn btn-warning action-btn">
                         <i class="bi bi-arrow-repeat"></i> Alterar Palavra-passe
                     </button>
                 </form>
@@ -215,6 +215,20 @@
     .avatar-preview-placeholder i {
         font-size: 4rem;
         color: #94a3b8;
+    }
+
+    .action-btn {
+        transition: all 0.15s ease;
+        font-weight: 500;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .action-btn:active {
+        transform: translateY(0);
     }
 </style>
 
