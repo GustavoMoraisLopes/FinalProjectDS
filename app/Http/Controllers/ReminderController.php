@@ -28,9 +28,10 @@ class ReminderController extends Controller
 
         if ($notification) {
             $notification->markAsRead();
+            return redirect()->back()->with('success', 'Notificação marcada como lida.');
         }
 
-        return redirect()->back();
+        return redirect()->back()->with('error', 'Notificação não encontrada.');
     }
 
     public function markAllAsRead()
