@@ -26,6 +26,11 @@ class User extends Authenticatable
         'department',
         'institution',
         'avatar',
+        'user_type',
+        'school',
+        'course_type',
+        'course_name',
+        'class_year',
     ];
 
     /**
@@ -64,5 +69,15 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isStudent(): bool
+    {
+        return $this->user_type === 'student';
+    }
+
+    public function isTeacher(): bool
+    {
+        return $this->user_type === 'teacher';
     }
 }

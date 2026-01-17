@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Perfil
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    // Removida rota /profile/edit (não utilizada)
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
 

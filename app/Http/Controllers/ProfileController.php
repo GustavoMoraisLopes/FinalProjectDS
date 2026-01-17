@@ -16,17 +16,33 @@ class ProfileController extends Controller
         return view('profiles.show', compact('user'));
     }
 
+    public function edit()
+    {
+        $user = Auth::user();
+        return view('profiles.edit', compact('user'));
+    }
+
     public function update(Request $request)
     {
         $user = Auth::user();
 
-        $validated = $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'department' => 'nullable|string|max:255',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        ];
+
+        // Se for aluno, validar dados académicos
+        if ($user->isStudent()) {
+            $rules['school'] = 'required|in:istec,ipta,outro';
+            $rules['course_type'] = 'required|string|max:100';
+            $rules['course_name'] = 'required|string|max:255';
+            $rules['class_year'] = 'required|string|max:100';
+        }
+
+        $validated = $request->validate($rules);
 
         // Remover avatar se solicitado
         if ($request->has('remove_avatar')) {

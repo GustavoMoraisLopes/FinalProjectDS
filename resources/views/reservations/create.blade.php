@@ -128,39 +128,67 @@
                     <h6 class="text-muted mb-3">
                         <i class="bi bi-card-text"></i> Finalidade / Curso
                     </h6>
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="school" class="form-label">Instituição *</label>
-                            <select class="form-select @error('school') is-invalid @enderror" id="school" name="school" required>
-                                <option value="">Selecione a instituição</option>
-                                <option value="istec" {{ old('school') == 'istec' ? 'selected' : '' }}>ISTEC Porto</option>
-                                <option value="ipta" {{ old('school') == 'ipta' ? 'selected' : '' }}>IPTA Porto</option>
-                                <option value="outro" {{ old('school') == 'outro' ? 'selected' : '' }}>Outro</option>
-                            </select>
-                            @error('school')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    @if(auth()->user()->isStudent())
+                        <!-- Aluno: Auto-preencher dados académicos -->
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="school" class="form-label">Instituição</label>
+                                <input type="text" class="form-control" id="school" value="{{ auth()->user()->school ? (auth()->user()->school === 'istec' ? 'ISTEC Porto' : (auth()->user()->school === 'ipta' ? 'IPTA Porto' : 'Outro')) : '-' }}" disabled>
+                                <input type="hidden" name="school" value="{{ auth()->user()->school }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="course_type" class="form-label">Tipo de Curso</label>
+                                <input type="text" class="form-control" id="course_type" value="{{ auth()->user()->course_type ?? '-' }}" disabled>
+                                <input type="hidden" name="course_type" value="{{ auth()->user()->course_type }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="course_name" class="form-label">Curso</label>
+                                <input type="text" class="form-control" id="course_name" value="{{ auth()->user()->course_name ?? '-' }}" disabled>
+                                <input type="hidden" name="course_name" value="{{ auth()->user()->course_name }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="class_year" class="form-label">Turma / Ano</label>
+                                <input type="text" class="form-control" id="class_year" value="{{ auth()->user()->class_year ?? '-' }}" disabled>
+                                <input type="hidden" name="class_year" value="{{ auth()->user()->class_year }}">
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label for="course_type" class="form-label">Tipo de Curso *</label>
-                            <select class="form-select @error('course_type') is-invalid @enderror" id="course_type" name="course_type" required disabled>
-                                <option value="">Selecione o tipo</option>
-                            </select>
-                            @error('course_type')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label for="course_name" class="form-label">Curso *</label>
-                            <select class="form-select @error('course_name') is-invalid @enderror" id="course_name" name="course_name" required disabled>
-                                <option value="">Selecione o curso</option>
-                            </select>
-                            @error('course_name')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label for="class_year" class="form-label">Turma / Ano *</label>
-                            <select class="form-select @error('class_year') is-invalid @enderror" id="class_year" name="class_year" required disabled>
-                                <option value="">Selecione a turma</option>
-                            </select>
+                        <small class="text-muted">Dados académicos do seu perfil. Para atualizar, <a href="{{ route('profile.show') }}">edite seu perfil</a>.</small>
+                    @else
+                        <!-- Professor: Seleção manual -->
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="school" class="form-label">Instituição *</label>
+                                <select class="form-select @error('school') is-invalid @enderror" id="school" name="school" required>
+                                    <option value="">Selecione a instituição</option>
+                                    <option value="istec" {{ old('school') == 'istec' ? 'selected' : '' }}>ISTEC Porto</option>
+                                    <option value="ipta" {{ old('school') == 'ipta' ? 'selected' : '' }}>IPTA Porto</option>
+                                    <option value="outro" {{ old('school') == 'outro' ? 'selected' : '' }}>Outro</option>
+                                </select>
+                                @error('school')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label for="course_type" class="form-label">Tipo de Curso *</label>
+                                <select class="form-select @error('course_type') is-invalid @enderror" id="course_type" name="course_type" required disabled>
+                                    <option value="">Selecione o tipo</option>
+                                </select>
+                                @error('course_type')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label for="course_name" class="form-label">Curso *</label>
+                                <select class="form-select @error('course_name') is-invalid @enderror" id="course_name" name="course_name" required disabled>
+                                    <option value="">Selecione o curso</option>
+                                </select>
+                                @error('course_name')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label for="class_year" class="form-label">Turma / Ano *</label>
+                                <select class="form-select @error('class_year') is-invalid @enderror" id="class_year" name="class_year" required disabled>
+                                    <option value="">Selecione a turma</option>
+                                </select>
                             @error('class_year')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                     <div class="mb-3">
                         <label for="purpose" class="form-label">Finalidade / Descrição (Opcional)</label>

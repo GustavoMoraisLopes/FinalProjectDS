@@ -40,20 +40,33 @@ class ReservationController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'equipment_id' => 'required|exists:equipments,id',
             'start_date' => 'required|date_format:d/m/Y',
             'end_date' => 'required|date_format:d/m/Y',
             'pickup_time' => 'required|date_format:H:i',
             'return_time' => 'required|date_format:H:i',
-            'school' => 'required|in:istec,ipta,outro',
-            'course_type' => 'required_unless:school,outro|string|max:100',
-            'course_name' => 'required_unless:school,outro|string|max:255',
-            'class_year' => 'required_unless:school,outro|string|max:100',
             'purpose' => 'nullable|string|max:255',
             'project' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:1000',
-        ]);
+        ];
+
+        // Validações diferentes para aluno vs professor
+        if (auth()->user()->isStudent()) {
+            // Aluno: dados académicos vêm do perfil (inputs hidden)
+            $rules['school'] = 'required|in:istec,ipta,outro';
+            $rules['course_type'] = 'required|string|max:100';
+            $rules['course_name'] = 'required|string|max:255';
+            $rules['class_year'] = 'required|string|max:100';
+        } else {
+            // Professor: dados académicos devem ser selecionados manualmente
+            $rules['school'] = 'required|in:istec,ipta,outro';
+            $rules['course_type'] = 'required_unless:school,outro|string|max:100';
+            $rules['course_name'] = 'required_unless:school,outro|string|max:255';
+            $rules['class_year'] = 'required_unless:school,outro|string|max:100';
+        }
+
+        $validated = $request->validate($rules);
 
         $start = Carbon::createFromFormat('d/m/Y', $validated['start_date'])->startOfDay();
         $end = Carbon::createFromFormat('d/m/Y', $validated['end_date'])->endOfDay();
