@@ -101,7 +101,7 @@
 
 1. **Clone o repositório**
 ```bash
-git clone https://github.com/seu-usuario/labstock.git
+git clone https://github.com/GustavoMoraisLopes/FinalProjectDS.git
 cd labstock
 ```
 
@@ -242,14 +242,10 @@ Este projeto é open-source e está disponível sob a licença **MIT**.
 ## 👨‍💻 Autor
 
 **Gustavo Morais Pereira Lopes**
-- Curso: CTeSP Desenvolvimento de Software
-- Instituição: ISTEC Porto
-- Ano: 2025/2026
 
 ---
 
 <div align="center">
-  <p>Desenvolvido com ❤️ em Laravel</p>
-  <p>ISTEC Porto • 2026</p>
+  <p>Desenvolvido em Laravel</p>
 </div>
 
