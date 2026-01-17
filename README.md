@@ -223,7 +223,7 @@ labstock/
 
 ## 📸 Screenshots
 
-*(Adicione screenshots do sistema aqui)*
+*()*
 
 ---
 
