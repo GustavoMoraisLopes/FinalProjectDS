@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
     // Removida rota /profile/edit (não utilizada)
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+    Route::post('/profile/request-teacher', [ProfileController::class, 'requestTeacherAccess'])->name('profile.request-teacher');
 
     // Lembretes
     Route::get('/reminders', [ReminderController::class, 'index'])->name('reminders.index');
@@ -66,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['admin'])->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
         Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+        Route::post('/admin/users/{id}/approve-teacher', [AdminController::class, 'approveTeacher'])->name('admin.approve-teacher');
         Route::get('/admin/audit-logs', [AdminController::class, 'auditLogs'])->name('admin.logs');
     });
 });

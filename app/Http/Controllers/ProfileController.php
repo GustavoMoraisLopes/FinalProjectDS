@@ -89,4 +89,27 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.show')->with('success', 'Palavra-passe alterada com sucesso!');
     }
+
+    public function requestTeacherAccess(Request $request)
+    {
+        $user = Auth::user();
+
+        // Verificar se já é professor
+        if ($user->isTeacher()) {
+            return redirect()->route('profile.show')->with('info', 'Já possui acesso como professor.');
+        }
+
+        // Verificar se já tem pedido pendente
+        if ($user->hasPendingTeacherRequest()) {
+            return redirect()->route('profile.show')->with('info', 'Já possui um pedido pendente.');
+        }
+
+        // Criar pedido
+        $user->update(['teacher_request_pending' => true]);
+
+        // Notificar admins (opcional: implementar notificação)
+        // Admin::all()->each->notify(new TeacherAccessRequestNotification($user));
+
+        return redirect()->route('profile.show')->with('success', 'Pedido enviado! Aguarde aprovação do administrador.');
+    }
 }

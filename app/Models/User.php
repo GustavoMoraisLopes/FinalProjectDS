@@ -27,6 +27,7 @@ class User extends Authenticatable
         'institution',
         'avatar',
         'user_type',
+        'teacher_request_pending',
         'school',
         'course_type',
         'course_name',
@@ -53,6 +54,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'teacher_request_pending' => 'boolean',
         ];
     }
 
@@ -79,5 +81,10 @@ class User extends Authenticatable
     public function isTeacher(): bool
     {
         return $this->user_type === 'teacher';
+    }
+
+    public function hasPendingTeacherRequest(): bool
+    {
+        return $this->teacher_request_pending === true;
     }
 }

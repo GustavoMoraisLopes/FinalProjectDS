@@ -179,7 +179,7 @@
         </div>
 
         <!-- Alterar Palavra-passe -->
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-header bg-light">
                 <h5 class="mb-0">
                     <i class="bi bi-lock"></i> Alterar Palavra-passe
@@ -220,6 +220,36 @@
                 </form>
             </div>
         </div>
+
+        @if($user->isStudent())
+        <!-- Solicitar Acesso como Professor -->
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-badge"></i> Acesso como Professor
+                </h5>
+            </div>
+            <div class="card-body">
+                @if($user->hasPendingTeacherRequest())
+                    <div class="alert alert-warning">
+                        <i class="bi bi-clock-history"></i> <strong>Pedido Pendente</strong><br>
+                        O seu pedido para acesso como professor está a aguardar aprovação do administrador.
+                    </div>
+                @else
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-info-circle"></i> Se é docente ou membro do staff, pode solicitar acesso como professor. 
+                        Esta funcionalidade permite inserir manualmente os dados académicos ao criar requisições.
+                    </p>
+                    <form action="{{ route('profile.request-teacher') }}" method="POST" onsubmit="return confirm('Tem a certeza que pretende solicitar acesso como professor? Este pedido será analisado por um administrador.');">
+                        @csrf
+                        <button type="submit" class="btn btn-info action-btn">
+                            <i class="bi bi-send"></i> Solicitar Acesso como Professor
+                        </button>
+                    </form>
+                @endif
+            </div>
+        </div>
+        @endif
     </div>
 </div>
 

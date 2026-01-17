@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
+use App\Services\AuditLogger;
 
 class AdminController extends Controller
 {
@@ -44,5 +45,29 @@ class AdminController extends Controller
         $users = User::all();
 
         return view('admin.logs', compact('logs', 'users'));
+    }
+
+    public function approveTeacher($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        // Verificar se tem pedido pendente
+        if (!$user->hasPendingTeacherRequest()) {
+            return redirect()->route('admin.users')->with('error', 'Este utilizador não tem pedido pendente.');
+        }
+
+        // Atualizar user_type e limpar flag
+        $user->update([
+            'user_type' => 'teacher',
+            'teacher_request_pending' => false,
+        ]);
+
+        // Audit log
+        AuditLogger::log('user_promoted_to_teacher', $user, 'Utilizador ' . $user->name . ' promovido a professor');
+
+        // Notificar utilizador (opcional: implementar notificação)
+        // $user->notify(new TeacherAccessApprovedNotification());
+
+        return redirect()->route('admin.users')->with('success', 'Utilizador ' . $user->name . ' aprovado como professor!');
     }
 }
