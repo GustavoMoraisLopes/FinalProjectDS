@@ -68,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
         Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
         Route::post('/admin/users/{id}/approve-teacher', [AdminController::class, 'approveTeacher'])->name('admin.approve-teacher');
+        Route::post('/admin/users/{id}/reject-teacher', [AdminController::class, 'rejectTeacher'])->name('admin.reject-teacher');
         Route::get('/admin/audit-logs', [AdminController::class, 'auditLogs'])->name('admin.logs');
     });
 });

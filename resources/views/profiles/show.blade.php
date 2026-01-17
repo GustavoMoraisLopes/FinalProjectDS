@@ -237,7 +237,7 @@
                     </div>
                 @else
                     <p class="text-muted mb-3">
-                        <i class="bi bi-info-circle"></i> Se é docente ou membro do staff, pode solicitar acesso como professor. 
+                        <i class="bi bi-info-circle"></i> Se é docente ou membro do staff, pode solicitar acesso como professor.
                         Esta funcionalidade permite inserir manualmente os dados académicos ao criar requisições.
                     </p>
                     <form action="{{ route('profile.request-teacher') }}" method="POST" onsubmit="return confirm('Tem a certeza que pretende solicitar acesso como professor? Este pedido será analisado por um administrador.');">

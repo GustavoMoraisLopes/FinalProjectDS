@@ -70,4 +70,21 @@ class AdminController extends Controller
 
         return redirect()->route('admin.users')->with('success', 'Utilizador ' . $user->name . ' aprovado como professor!');
     }
+
+    public function rejectTeacher($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        if (!$user->hasPendingTeacherRequest()) {
+            return redirect()->route('admin.users')->with('error', 'Este utilizador não tem pedido pendente.');
+        }
+
+        $user->update([
+            'teacher_request_pending' => false,
+        ]);
+
+        AuditLogger::log('user_teacher_request_rejected', $user, 'Pedido de professor rejeitado para ' . $user->name);
+
+        return redirect()->route('admin.users')->with('success', 'Pedido de professor rejeitado para ' . $user->name . '.');
+    }
 }
