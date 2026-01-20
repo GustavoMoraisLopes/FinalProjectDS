@@ -5,6 +5,24 @@
 @section('page-subtitle', 'Geri equipamentos e stock.')
 
 @section('content')
+
+<!-- Abas por Categoria -->
+<div class="mb-4">
+    <div class="nav nav-tabs border-bottom" role="tablist">
+        <button class="nav-link {{ request('category') == '' ? 'active' : '' }}" id="all-tab" 
+                onclick="filterByCategory(''); return false;" role="tab">
+            <i class="bi bi-collection"></i> Todas as Categorias
+        </button>
+        @foreach($categories as $category)
+            <button class="nav-link {{ request('category') == $category->id ? 'active' : '' }}" 
+                    id="cat-{{ $category->id }}-tab"
+                    onclick="filterByCategory('{{ $category->id }}'); return false;" role="tab">
+                <i class="bi bi-box"></i> {{ $category->name }}
+            </button>
+        @endforeach
+    </div>
+</div>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div class="d-flex gap-2 flex-fill" style="max-width: 800px;">
         <form method="GET" action="{{ route('equipments.index') }}" class="d-flex gap-2 flex-fill" id="filterForm">
@@ -16,7 +34,7 @@
                    value="{{ request('search') }}"
                    autocomplete="off">
 
-            <select name="category" id="categorySelect" class="form-select" style="min-width: 180px;">
+            <select name="category" id="categorySelect" class="form-select" style="min-width: 180px; display: none;">
                 <option value="">Todas as Categorias</option>
                 @foreach($categories as $category)
                     <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
@@ -288,5 +306,38 @@
     .btn-outline-danger:hover {
         background: linear-gradient(135deg, #f55555 0%, #dc2626 100%);
     }
+
+    .nav-tabs {
+        gap: 10px;
+    }
+    .nav-link {
+        color: #667eea !important;
+        border: none;
+        border-bottom: 2px solid transparent !important;
+        border-radius: 8px 8px 0 0;
+        padding: 12px 16px;
+        transition: all 0.2s ease;
+    }
+    .nav-link:hover {
+        background-color: #f3f4f6;
+        border-bottom-color: #667eea !important;
+    }
+    .nav-link.active {
+        background-color: #f0f4ff;
+        border-bottom-color: #667eea !important;
+        font-weight: 600;
+    }
 </style>
+
+<script>
+    function filterByCategory(categoryId) {
+        const params = new URLSearchParams(window.location.search);
+        if (categoryId) {
+            params.set('category', categoryId);
+        } else {
+            params.delete('category');
+        }
+        window.location.search = params.toString();
+    }
+</script>
 @endsection

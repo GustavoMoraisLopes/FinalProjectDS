@@ -59,6 +59,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reservations/{reservation}/checkout', [ReservationController::class, 'checkout'])->name('reservations.checkout');
     Route::post('/reservations/{reservation}/checkin', [ReservationController::class, 'checkin'])->name('reservations.checkin');
 
+    // API para Acessórios (Cascata)
+    Route::get('/api/accessories/{equipmentId}', 'App\Http\Controllers\Api\AccessoriesController@getAccessories')->name('api.accessories');
+    Route::get('/api/check-availability/{equipmentId}', 'App\Http\Controllers\Api\AccessoriesController@checkAvailability')->name('api.check-availability');
+
     // Scanner
     Route::get('/scanner', [ScannerController::class, 'index'])->name('scanner');
     Route::post('/scanner/search', [ScannerController::class, 'search'])->name('scanner.search');

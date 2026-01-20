@@ -201,6 +201,24 @@
                         <input type="text" class="form-control" id="project" name="project" value="{{ old('project') }}">
                     </div>
 
+                    <hr class="my-4">
+
+                    <h6 class="text-muted mb-3">
+                        <i class="bi bi-bag-check"></i> Acessórios Recomendados
+                    </h6>
+                    <div id="accessories-container">
+                        <div class="alert alert-info" id="accessories-empty-message">
+                            <i class="bi bi-info-circle"></i> Selecione um equipamento para ver os acessórios recomendados
+                        </div>
+                        <div id="accessories-list" style="display: none;"></div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h6 class="text-muted mb-3">
+                        <i class="bi bi-card-text"></i> Observações
+                    </h6>
+
                     <div class="mb-3">
                         <label for="notes" class="form-label">Observações</label>
                         <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Ex: Para projeto da disciplina de Programação Web. Necessito também de um adaptador HDMI.">{{ old('notes') }}</textarea>
@@ -320,6 +338,75 @@
     equipmentSelect.addEventListener('change', updatePreview);
     rangeInput.addEventListener('change', updatePreview);
     purposeInput.addEventListener('input', updatePreview);
+
+    // Load accessories when equipment is selected
+    equipmentSelect.addEventListener('change', loadAccessories);
+
+    function loadAccessories() {
+        const equipmentId = equipmentSelect.value;
+        const emptyMessage = document.getElementById('accessories-empty-message');
+        const accessoriesList = document.getElementById('accessories-list');
+
+        if (!equipmentId) {
+            emptyMessage.style.display = 'block';
+            accessoriesList.style.display = 'none';
+            return;
+        }
+
+        // Fetch accessories from API
+        fetch(`/api/accessories/${equipmentId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.accessories.length > 0) {
+                    emptyMessage.style.display = 'none';
+                    accessoriesList.style.display = 'block';
+                    renderAccessories(data.accessories);
+                } else {
+                    emptyMessage.textContent = '<i class="bi bi-info-circle"></i> Este equipamento não tem acessórios recomendados';
+                    emptyMessage.style.display = 'block';
+                    accessoriesList.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar acessórios:', error);
+                emptyMessage.textContent = '<i class="bi bi-exclamation-triangle"></i> Erro ao carregar acessórios';
+                emptyMessage.style.display = 'block';
+                emptyMessage.classList.add('alert-danger');
+                accessoriesList.style.display = 'none';
+            });
+    }
+
+    function renderAccessories(accessories) {
+        const accessoriesList = document.getElementById('accessories-list');
+        accessoriesList.innerHTML = '';
+
+        accessories.forEach((accessory, index) => {
+            const checked = true; // Por defeito, vêm marcados
+            const html = `
+                <div class="form-check mb-2 p-2 border rounded" style="background-color: #f8f9fa;">
+                    <input class="form-check-input" type="checkbox" id="accessory_${index}" 
+                           name="accessories[${index}][equipment_id]" value="${accessory.id}" ${checked ? 'checked' : ''}>
+                    <label class="form-check-label" for="accessory_${index}">
+                        <strong>${accessory.name}</strong>
+                        <span class="badge bg-secondary">${accessory.category}</span>
+                    </label>
+                    <div class="ms-4 mt-1">
+                        <small class="text-muted">
+                            <i class="bi bi-hash"></i> ${accessory.serial_number} | 
+                            <span class="badge ${accessory.status === 'available' ? 'bg-success' : 'bg-warning'}">${accessory.status === 'available' ? 'Disponível' : 'Emprestado'}</span>
+                        </small>
+                    </div>
+                    <div class="ms-4 mt-2">
+                        <label for="qty_${index}" class="form-label small">Quantidade:</label>
+                        <input type="number" class="form-control form-control-sm" 
+                               id="qty_${index}" name="accessories[${index}][quantity]" 
+                               value="${accessory.default_quantity || 1}" min="1" max="10" style="width: 80px;">
+                    </div>
+                </div>
+            `;
+            accessoriesList.innerHTML += html;
+        });
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         if (window.flatpickr && rangeInput) {

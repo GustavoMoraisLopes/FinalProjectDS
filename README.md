@@ -243,13 +243,12 @@ Este projeto é open-source e está disponível sob a licença **MIT**.
 
 **Gustavo Morais Pereira Lopes**
 - Curso: CTeSP Desenvolvimento de Software
-- Instituição: ISTEC Porto
 - Ano: 2025/2026
 
 ---
 
 <div align="center">
-  <p>Desenvolvido com ❤️ em Laravel</p>
+  <p>Desenvolvido em Laravel</p>
   <p>ISTEC Porto • 2026</p>
 </div>
 

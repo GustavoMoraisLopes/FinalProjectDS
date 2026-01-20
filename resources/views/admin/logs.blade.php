@@ -111,11 +111,16 @@
 
 @push('styles')
 <style>
+    .audit-table {
+        font-size: 1rem;
+    }
     .audit-table thead th {
         position: sticky;
         top: 0;
         z-index: 2;
         background: #f8fafc;
+        font-size: 0.95rem;
+        font-weight: 600;
     }
     .audit-table th,
     .audit-table td {
@@ -135,10 +140,11 @@
     }
     .action-cell strong {
         font-weight: 600;
+        font-size: 0.95rem;
     }
     @media (max-width: 992px) {
         .audit-table {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
     }
 </style>

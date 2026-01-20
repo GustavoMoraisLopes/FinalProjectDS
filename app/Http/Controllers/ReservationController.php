@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Reservation;
 use App\Models\Equipment;
+use App\Models\ReservationItem;
 use Illuminate\Http\Request;
 use App\Services\AuditLogger;
 use Carbon\Carbon;
@@ -49,6 +50,9 @@ class ReservationController extends Controller
             'purpose' => 'nullable|string|max:255',
             'project' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:1000',
+            'accessories' => 'nullable|array', // Acessórios selecionados
+            'accessories.*.equipment_id' => 'exists:equipments,id',
+            'accessories.*.quantity' => 'numeric|min:1',
         ];
 
         // Validações diferentes para aluno vs professor
@@ -89,10 +93,32 @@ class ReservationController extends Controller
 
         $reservation = Reservation::create($validated);
 
+        // Adicionar equipamento principal como item
+        ReservationItem::create([
+            'reservation_id' => $reservation->id,
+            'equipment_id' => $validated['equipment_id'],
+            'quantity' => 1,
+            'item_type' => 'main',
+        ]);
+
+        // Adicionar acessórios se existirem
+        if (isset($validated['accessories']) && is_array($validated['accessories'])) {
+            foreach ($validated['accessories'] as $accessory) {
+                if (isset($accessory['equipment_id']) && $accessory['equipment_id']) {
+                    ReservationItem::create([
+                        'reservation_id' => $reservation->id,
+                        'equipment_id' => $accessory['equipment_id'],
+                        'quantity' => $accessory['quantity'] ?? 1,
+                        'item_type' => 'accessory',
+                    ]);
+                }
+            }
+        }
+
         AuditLogger::log(
             'reservation.created',
             $reservation,
-            'Requisição criada',
+            'Requisição criada com acessórios',
             null,
             [
                 'equipment_id' => $reservation->equipment_id,
@@ -101,6 +127,7 @@ class ReservationController extends Controller
                 'pickup_time' => $reservation->pickup_time,
                 'return_time' => $reservation->return_time,
                 'status' => $reservation->status,
+                'total_items' => $reservation->items()->count(),
             ]
         );
 
