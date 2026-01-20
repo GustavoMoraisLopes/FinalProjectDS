@@ -74,5 +74,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/users/{id}/approve-teacher', [AdminController::class, 'approveTeacher'])->name('admin.approve-teacher');
         Route::post('/admin/users/{id}/reject-teacher', [AdminController::class, 'rejectTeacher'])->name('admin.reject-teacher');
         Route::get('/admin/audit-logs', [AdminController::class, 'auditLogs'])->name('admin.logs');
+
+        // Gestão de Acessórios
+        Route::get('/admin/accessories', 'App\Http\Controllers\AccessoryManagementController@index')->name('admin.accessories.index');
+        Route::post('/admin/equipment/{equipment}/attach-accessory', 'App\Http\Controllers\AccessoryManagementController@attach')->name('admin.accessory.attach');
+        Route::delete('/admin/equipment/{equipment}/accessory/{accessory}', 'App\Http\Controllers\AccessoryManagementController@detach')->name('admin.accessory.detach');
+        Route::put('/admin/equipment/{equipment}/accessory/{accessory}', 'App\Http\Controllers\AccessoryManagementController@update')->name('admin.accessory.update');
     });
 });
