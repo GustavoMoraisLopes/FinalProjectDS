@@ -204,10 +204,10 @@
                     <hr class="my-4">
 
                     <h6 class="text-muted mb-3">
-                        <i class="bi bi-bag-check"></i> Acessórios Recomendados
+                        <i class="bi bi-cart-check"></i> Acessórios Recomendados (Carrinho)
                     </h6>
                     <div id="accessories-container">
-                        <div class="alert alert-info" id="accessories-empty-message">
+                        <div class="alert alert-info" id="accessories-empty-message" style="display: block;">
                             <i class="bi bi-info-circle"></i> Selecione um equipamento para ver os acessórios recomendados
                         </div>
                         <div id="accessories-list" style="display: none;"></div>
@@ -243,6 +243,47 @@
     .equipment-icon-preview {
         font-size: 4rem;
         color: #667eea;
+    }
+
+    .accessories-cart {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .accessory-item {
+        transition: all 0.2s ease;
+    }
+
+    .accessory-item:hover {
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+        border-left-color: #5bd1e1 !important;
+    }
+
+    .accessory-item .form-check-input {
+        cursor: pointer;
+        border: 2px solid #ddd;
+        transition: all 0.2s ease;
+    }
+
+    .accessory-item .form-check-input:checked {
+        background-color: #667eea;
+        border-color: #667eea;
+    }
+
+    .accessory-item .form-check-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .accessory-item input[type="number"] {
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    .accessory-item input[type="number"]:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
     }
 
     #equipment_id:focus,
@@ -353,8 +394,8 @@
             return;
         }
 
-        // Fetch accessories from API
-        fetch(`/api/accessories/${equipmentId}`)
+        // Fetch recommended accessories by equipment type
+        fetch(`/api/type-accessories/equipment/${equipmentId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success && data.accessories.length > 0) {
@@ -362,14 +403,14 @@
                     accessoriesList.style.display = 'block';
                     renderAccessories(data.accessories);
                 } else {
-                    emptyMessage.textContent = '<i class="bi bi-info-circle"></i> Este equipamento não tem acessórios recomendados';
+                    emptyMessage.innerHTML = '<i class="bi bi-info-circle"></i> Sem acessórios recomendados para este equipamento';
                     emptyMessage.style.display = 'block';
                     accessoriesList.style.display = 'none';
                 }
             })
             .catch(error => {
                 console.error('Erro ao carregar acessórios:', error);
-                emptyMessage.textContent = '<i class="bi bi-exclamation-triangle"></i> Erro ao carregar acessórios';
+                emptyMessage.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Erro ao carregar acessórios';
                 emptyMessage.style.display = 'block';
                 emptyMessage.classList.add('alert-danger');
                 accessoriesList.style.display = 'none';
@@ -380,32 +421,53 @@
         const accessoriesList = document.getElementById('accessories-list');
         accessoriesList.innerHTML = '';
 
+        let cartHtml = '<div class="accessories-cart">';
+
         accessories.forEach((accessory, index) => {
             const checked = true; // Por defeito, vêm marcados
-            const html = `
-                <div class="form-check mb-2 p-2 border rounded" style="background-color: #f8f9fa;">
-                    <input class="form-check-input" type="checkbox" id="accessory_${index}" 
-                           name="accessories[${index}][equipment_id]" value="${accessory.id}" ${checked ? 'checked' : ''}>
-                    <label class="form-check-label" for="accessory_${index}">
-                        <strong>${accessory.name}</strong>
-                        <span class="badge bg-secondary">${accessory.category}</span>
-                    </label>
-                    <div class="ms-4 mt-1">
-                        <small class="text-muted">
-                            <i class="bi bi-hash"></i> ${accessory.serial_number} | 
-                            <span class="badge ${accessory.status === 'available' ? 'bg-success' : 'bg-warning'}">${accessory.status === 'available' ? 'Disponível' : 'Emprestado'}</span>
-                        </small>
+            const statusBadge = accessory.status === 'available' ? 'bg-success' : (accessory.status === 'loaned' ? 'bg-warning' : 'bg-danger');
+            const statusText = accessory.status === 'available' ? 'Disponível' : (accessory.status === 'loaned' ? 'Emprestado' : 'Manutenção');
+
+            cartHtml += `
+                <div class="accessory-item p-3 border rounded mb-2" style="background-color: #f8f9fa; border-left: 4px solid #667eea;">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="accessory_${index}"
+                                       name="accessories[${index}][equipment_id]" value="${accessory.id}" ${checked ? 'checked' : ''}>
+                                <input type="hidden" name="accessories[${index}][quantity]" value="1">
+                                <label class="form-check-label" for="accessory_${index}">
+                                    <strong>${escapeHtml(accessory.name)}</strong>
+                                </label>
+                            </div>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-bookmark"></i> ${escapeHtml(accessory.category)}
+                                <span class="mx-1">•</span>
+                                <i class="bi bi-hash"></i> ${escapeHtml(accessory.serial_number)}
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <span class="badge ${statusBadge}" style="font-size: 0.8rem;">${statusText}</span>
+                        </div>
                     </div>
-                    <div class="ms-4 mt-2">
-                        <label for="qty_${index}" class="form-label small">Quantidade:</label>
-                        <input type="number" class="form-control form-control-sm" 
-                               id="qty_${index}" name="accessories[${index}][quantity]" 
-                               value="${accessory.default_quantity || 1}" min="1" max="10" style="width: 80px;">
-                    </div>
+                    ${accessory.notes ? `<small class="text-muted d-block mt-2"><i class="bi bi-info-circle"></i> ${escapeHtml(accessory.notes)}</small>` : ''}
                 </div>
             `;
-            accessoriesList.innerHTML += html;
         });
+
+        cartHtml += '</div>';
+        accessoriesList.innerHTML = cartHtml;
+    }
+
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, m => map[m]);
     }
 
     document.addEventListener('DOMContentLoaded', function() {

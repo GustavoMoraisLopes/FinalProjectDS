@@ -38,6 +38,11 @@ class Equipment extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function equipmentType(): BelongsTo
+    {
+        return $this->belongsTo(EquipmentType::class);
+    }
+
     public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);

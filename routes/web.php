@@ -63,6 +63,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/api/accessories/{equipmentId}', 'App\Http\Controllers\Api\AccessoriesController@getAccessories')->name('api.accessories');
     Route::get('/api/check-availability/{equipmentId}', 'App\Http\Controllers\Api\AccessoriesController@checkAvailability')->name('api.check-availability');
 
+    // API para Acessórios Recomendados por Tipo de Equipamento
+    Route::get('/api/type-accessories/type/{typeId}', 'App\Http\Controllers\Api\EquipmentTypeAccessoriesController@getByType')->name('api.type-accessories.type');
+    Route::get('/api/type-accessories/equipment/{equipmentId}', 'App\Http\Controllers\Api\EquipmentTypeAccessoriesController@getByEquipment')->name('api.type-accessories.equipment');
+
     // Scanner
     Route::get('/scanner', [ScannerController::class, 'index'])->name('scanner');
     Route::post('/scanner/search', [ScannerController::class, 'search'])->name('scanner.search');

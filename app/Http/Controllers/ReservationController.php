@@ -34,7 +34,9 @@ class ReservationController extends Controller
     public function create(Request $request)
     {
         $equipment_id = $request->query('equipment_id');
-        $equipments = Equipment::where('status', 'available')->get();
+        $equipments = Equipment::with('equipmentType', 'category')
+            ->where('status', 'available')
+            ->get();
 
         return view('reservations.create', compact('equipments', 'equipment_id'));
     }

@@ -2,7 +2,12 @@
 
 ## Descrição
 
-O LabStock agora suporta **requisições em cascata** com acessórios pré-configurados. Quando um utilizador requisita um equipamento (ex: câmara), o sistema carrega automaticamente os acessórios recomendados (baterias, cartões de memória, carregadores, etc).
+O LabStock agora suporta:
+1. **Requisições em cascata** com acessórios pré-configurados
+2. **Tipos de equipamento** para melhor categorização e organização
+3. **Associação automática** de tipos de equipamento a equipamentos específicos
+
+Quando um utilizador requisita um equipamento (ex: câmara), o sistema carrega automaticamente os acessórios recomendados (baterias, cartões de memória, carregadores, etc).
 
 ## Como Funciona
 
@@ -16,20 +21,86 @@ O LabStock agora suporta **requisições em cascata** com acessórios pré-confi
 6. Submete a requisição COM TUDO (equipamento + acessórios)
 ```
 
-### 2. **Configuração Admin**
+### 2. **Configuração de Tipos de Equipamento**
+
+Os tipos de equipamento disponíveis incluem:
+- **Câmara de Foto** - Câmaras fotográficas profissionais
+- **Câmara de Vídeo** - Câmaras para gravação de vídeo
+- **Lente** - Lentes e objetivas para câmaras
+- **Cartão de Memória** - Cartões SD, CompactFlash, XQD, etc.
+- **Bateria** - Baterias recarregáveis
+- **Carregador** - Carregadores para baterias
+- **Tripé** - Tripés e suportes
+- **Iluminação** - Equipamentos de iluminação profissional
+- **Microfone** - Microfones para áudio
+- **Cabo/Acessório** - Cabos e adaptadores
+- **Computador** - Desktop e portáteis
+- **Monitor** - Monitores e ecrãs
+- **Rato/Teclado** - Periféricos de entrada
+- **Disco Externo** - Armazenamento externo
+- **Projetor** - Projetores
+- **Servidor** - Servidores
+- **Switch/Router** - Equipamentos de rede
+- **Webcam** - Câmaras web
+- **Headset** - Auscultadores com microfone
+- **Smartphone** - Telemóveis
+- **Tablet** - Tablets
+- **Outro** - Outro tipo de equipamento
+
+Ao criar ou editar um equipamento, pode atribuir um tipo para melhor organização:
+```
+Novo Equipamento
+├─ Nome: Canon EOS 5D Mark IV
+├─ Categoria: Câmaras
+├─ Tipo: Câmara de Foto  ← NOVO CAMPO
+├─ S/N: ABC123456
+└─ ...
+```
+
+### 3. **Configuração Admin**
 O admin pode configurar quais são os acessórios padrão para cada equipamento:
 - Aceder a `/admin/accessories`
 - Selecionar um equipamento
 - Adicionar acessórios com quantidades recomendadas
 - Exemplo: Câmara → Bateria (qty: 1), Cartão (qty: 2), Carregador (qty: 1)
 
-### 3. **Visualização do Inventário**
-O inventário agora tem **abas por categoria** para melhor organização:
+### 4. **Visualização do Inventário**
+O inventário agora tem:
+- **Acordeão de categorias** para melhor organização
+- **Coluna de Tipo** para visualizar tipo de equipamento
+- **Busca global** (nome + S/N)
+- **Filtro de estado** (Disponível/Emprestado/Manutenção/Indisponível)
 ```
-[Todas] [Câmaras] [Computadores] [Periféricos] [Acessórios] ...
+Equipamentos
+├─ Câmaras (5)
+│  └─ Canon EOS 5D [Câmara de Foto] ...
+│  └─ Sony A7III [Câmara de Foto] ...
+├─ Computadores (3)
+│  └─ Dell XPS [Computador] ...
 ```
 
 ## Estrutura de Base de Dados
+
+### Tabela `equipment_types`
+```
+- id
+- name (ex: "Câmara de Foto", "Lente")
+- description (descrição detalhada)
+- icon (Bootstrap icon class)
+- timestamps
+```
+
+### Tabela `equipments` (atualizada)
+```
+- id
+- name
+- category_id (FK)
+- equipment_type_id (FK) ← NOVO CAMPO
+- serial_number
+- location
+- status
+- ...
+```
 
 ### Tabela `equipment_accessories`
 ```

@@ -27,6 +27,9 @@
                         <i class="bi bi-bookmark"></i> <strong>Categoria:</strong> <span id="preview-category">{{ $equipment->category->name }}</span>
                     </small>
                     <small class="d-block mb-2">
+                        <i class="bi bi-box"></i> <strong>Tipo:</strong> <span id="preview-type">{{ $equipment->equipmentType->name ?? '-' }}</span>
+                    </small>
+                    <small class="d-block mb-2">
                         <i class="bi bi-geo-alt"></i> <strong>Localização:</strong> <span id="preview-location">{{ $equipment->location ?? '-' }}</span>
                     </small>
                     <small class="d-block">
@@ -115,6 +118,22 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
+                            <label for="equipment_type_id" class="form-label">Tipo de Equipamento</label>
+                            <select class="form-select @error('equipment_type_id') is-invalid @enderror"
+                                    id="equipment_type_id" name="equipment_type_id" onchange="updatePreview()">
+                                <option value="">Selecionar tipo...</option>
+                                @foreach($equipmentTypes as $type)
+                                    <option value="{{ $type->id }}" {{ old('equipment_type_id', $equipment->equipment_type_id) == $type->id ? 'selected' : '' }}>
+                                        {{ $type->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('equipment_type_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
                             <label for="serial_number" class="form-label">Número de Série *</label>
                             <input type="text" class="form-control @error('serial_number') is-invalid @enderror"
                                    id="serial_number" name="serial_number" value="{{ old('serial_number', $equipment->serial_number) }}" required
@@ -228,6 +247,10 @@
         const categorySelect = document.getElementById('category_id');
         const categoryText = categorySelect?.options[categorySelect.selectedIndex]?.text || '-';
         document.getElementById('preview-category').textContent = categoryText;
+
+        const typeSelect = document.getElementById('equipment_type_id');
+        const typeText = typeSelect?.options[typeSelect.selectedIndex]?.text || '-';
+        document.getElementById('preview-type').textContent = typeText;
 
         const locVal = document.getElementById('location')?.value || '-';
         document.getElementById('preview-location').textContent = locVal;

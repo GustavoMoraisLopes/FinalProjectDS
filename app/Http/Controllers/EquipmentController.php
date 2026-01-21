@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Equipment;
 use App\Models\Category;
+use App\Models\EquipmentType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -13,7 +14,7 @@ class EquipmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Equipment::with('category');
+        $query = Equipment::with(['category', 'equipmentType']);
 
         // Restrição por instituição (não-admin)
         $user = $request->user();
@@ -38,7 +39,7 @@ class EquipmentController extends Controller
             $query->where('status', $request->status);
         }
 
-        $equipments = $query->paginate(10)->withQueryString();
+        $equipments = $query->get();
         $categories = Category::all();
 
         return view('equipments.index', compact('equipments', 'categories'));
@@ -47,7 +48,8 @@ class EquipmentController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('equipments.create', compact('categories'));
+        $equipmentTypes = EquipmentType::all();
+        return view('equipments.create', compact('categories', 'equipmentTypes'));
     }
 
     public function store(Request $request)
@@ -55,6 +57,7 @@ class EquipmentController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
+            'equipment_type_id' => 'nullable|exists:equipment_types,id',
             'serial_number' => 'required|string|unique:equipments',
             'location' => 'nullable|string|max:255',
             'status' => 'required|in:available,maintenance,loaned,unavailable',
@@ -94,7 +97,8 @@ class EquipmentController extends Controller
     public function edit(Equipment $equipment)
     {
         $categories = Category::all();
-        return view('equipments.edit', compact('equipment', 'categories'));
+        $equipmentTypes = EquipmentType::all();
+        return view('equipments.edit', compact('equipment', 'categories', 'equipmentTypes'));
     }
 
     public function update(Request $request, Equipment $equipment)
@@ -102,6 +106,7 @@ class EquipmentController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
+            'equipment_type_id' => 'nullable|exists:equipment_types,id',
             'serial_number' => 'required|string|unique:equipments,serial_number,' . $equipment->id,
             'location' => 'nullable|string|max:255',
             'status' => 'required|in:available,maintenance,loaned,unavailable',

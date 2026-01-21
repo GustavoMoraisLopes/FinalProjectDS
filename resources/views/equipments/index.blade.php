@@ -6,55 +6,21 @@
 
 @section('content')
 
-<!-- Abas por Categoria -->
-<div class="mb-4">
-    <div class="nav nav-tabs border-bottom" role="tablist">
-        <button class="nav-link {{ request('category') == '' ? 'active' : '' }}" id="all-tab" 
-                onclick="filterByCategory(''); return false;" role="tab">
-            <i class="bi bi-collection"></i> Todas as Categorias
-        </button>
-        @foreach($categories as $category)
-            <button class="nav-link {{ request('category') == $category->id ? 'active' : '' }}" 
-                    id="cat-{{ $category->id }}-tab"
-                    onclick="filterByCategory('{{ $category->id }}'); return false;" role="tab">
-                <i class="bi bi-box"></i> {{ $category->name }}
-            </button>
-        @endforeach
-    </div>
-</div>
-
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <div class="d-flex gap-2 flex-fill" style="max-width: 800px;">
-        <form method="GET" action="{{ route('equipments.index') }}" class="d-flex gap-2 flex-fill" id="filterForm">
-            <input type="text"
-                   name="search"
-                   id="searchInput"
-                   class="form-control"
-                   placeholder="Pesquisar por nome ou serial..."
-                   value="{{ request('search') }}"
-                   autocomplete="off">
+    <div class="d-flex gap-2 flex-fill" style="max-width: 500px;">
+        <input type="text" id="globalSearch" class="form-control" placeholder="Pesquisar em tudo..." autocomplete="off">
 
-            <select name="category" id="categorySelect" class="form-select" style="min-width: 180px; display: none;">
-                <option value="">Todas as Categorias</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
+        <select id="globalStatus" class="form-select" style="min-width: 150px;">
+            <option value="">Todos os Estados</option>
+            <option value="available">Disponível</option>
+            <option value="loaned">Emprestado</option>
+            <option value="maintenance">Manutenção</option>
+            <option value="unavailable">Indisponível</option>
+        </select>
 
-            <select name="status" id="statusSelect" class="form-select" style="min-width: 180px;">
-                <option value="">Todos os Estados</option>
-                <option value="available" {{ request('status') == 'available' ? 'selected' : '' }}>Disponível</option>
-                <option value="loaned" {{ request('status') == 'loaned' ? 'selected' : '' }}>Emprestado</option>
-                <option value="maintenance" {{ request('status') == 'maintenance' ? 'selected' : '' }}>Manutenção</option>
-                <option value="unavailable" {{ request('status') == 'unavailable' ? 'selected' : '' }}>Indisponível</option>
-            </select>
-
-            <button type="button" id="clearFilters" class="btn btn-outline-secondary" title="Limpar filtros">
-                <i class="bi bi-x-circle"></i>
-            </button>
-        </form>
+        <button type="button" id="clearAllFilters" class="btn btn-outline-secondary" title="Limpar filtros">
+            <i class="bi bi-x-circle"></i>
+        </button>
     </div>
 
     @if(auth()->user()->isAdmin())
@@ -64,189 +30,126 @@
     @endif
 </div>
 
-<div class="card shadow-sm">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-equipment table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th>Equipamento</th>
-                        <th>Categoria</th>
-                        <th>S/N</th>
-                        <th>Localização</th>
-                        <th>Estado</th>
-                        <th class="text-center">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($equipments as $equipment)
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="equipment-img bg-light me-2 d-flex align-items-center justify-content-center" style="overflow: hidden;">
-                                    @if($equipment->image)
-                                        <img src="{{ asset('storage/' . $equipment->image) }}" alt="{{ $equipment->name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                    @else
-                                        <i class="bi bi-box-seam text-muted"></i>
-                                    @endif
-                                </div>
-                                <div>
-                                    <div class="fw-bold">{{ $equipment->name }}</div>
-                                    <small class="text-muted">{{ $equipment->condition }}</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{ $equipment->category->name }}</td>
-                        <td><code>{{ $equipment->serial_number }}</code></td>
-                        <td>{{ $equipment->location }}</td>
-                        <td>
-                            @if($equipment->status == 'available')
-                                <span class="badge status-available">Disponível</span>
-                            @elseif($equipment->status == 'loaned')
-                                <span class="badge status-loaned">Emprestado</span>
-                            @elseif($equipment->status == 'maintenance')
-                                <span class="badge status-maintenance">Manutenção</span>
-                            @else
-                                <span class="badge bg-secondary">Indisponível</span>
-                            @endif
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex justify-content-center gap-2">
-                                <a href="{{ route('equipments.show', $equipment) }}" class="btn btn-icon btn-outline-info" title="Ver detalhes" aria-label="Ver detalhes">
-                                    <i class="bi bi-eye"></i>
-                                </a>
+<!-- Acordeão de Categorias -->
+<div class="accordion" id="categoriesAccordion">
+    @forelse($categories as $category)
+        @php
+            $categoryEquipments = $equipments->filter(fn($eq) => $eq->category_id == $category->id);
+        @endphp
 
-                                @if(auth()->user()->isAdmin())
-                                <a href="{{ route('equipments.edit', $equipment) }}" class="btn btn-icon btn-outline-warning" title="Editar" aria-label="Editar">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button{{ $loop->first ? '' : ' collapsed' }}" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse{{ $category->id }}" aria-expanded="{{ $loop->first ? 'true' : 'false' }}">
+                    <i class="bi bi-box me-2"></i>
+                    <strong>{{ $category->name }}</strong>
+                    <span class="badge bg-secondary ms-2">{{ $categoryEquipments->count() }}</span>
+                </button>
+            </h2>
+            <div id="collapse{{ $category->id }}" class="accordion-collapse collapse{{ $loop->first ? ' show' : '' }}"
+                 data-bs-parent="#categoriesAccordion">
+                <div class="accordion-body p-0">
+                    @if($categoryEquipments->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-equipment table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Equipamento</th>
+                                        <th>S/N</th>
+                                        <th>Tipo</th>
+                                        <th>Localização</th>
+                                        <th>Estado</th>
+                                        <th class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($categoryEquipments as $equipment)
+                                    <tr class="equipment-row" data-search="{{ strtolower($equipment->name . ' ' . $equipment->serial_number) }}"
+                                        data-status="{{ $equipment->status }}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="equipment-img bg-light me-2 d-flex align-items-center justify-content-center">
+                                                    @if($equipment->image)
+                                                        <img src="{{ asset('storage/' . $equipment->image) }}" alt="{{ $equipment->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    @else
+                                                        <i class="bi bi-box-seam text-muted"></i>
+                                                    @endif
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold">{{ $equipment->name }}</div>
+                                                    <small class="text-muted">{{ $equipment->condition }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><code>{{ $equipment->serial_number }}</code></td>
+                                        <td>
+                                            @if($equipment->equipmentType)
+                                                <span class="badge bg-light text-dark">{{ $equipment->equipmentType->name }}</span>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $equipment->location }}</td>
+                                        <td>
+                                            @if($equipment->status == 'available')
+                                                <span class="badge status-available">Disponível</span>
+                                            @elseif($equipment->status == 'loaned')
+                                                <span class="badge status-loaned">Emprestado</span>
+                                            @elseif($equipment->status == 'maintenance')
+                                                <span class="badge status-maintenance">Manutenção</span>
+                                            @else
+                                                <span class="badge bg-secondary">Indisponível</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="{{ route('equipments.show', $equipment) }}" class="btn btn-icon btn-outline-info" title="Ver detalhes" aria-label="Ver detalhes">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
 
-                                <form action="{{ route('equipments.destroy', $equipment) }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este equipamento?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-icon btn-outline-danger" title="Eliminar" aria-label="Eliminar">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="text-center py-4">
-                            <i class="bi bi-inbox fs-1 text-muted"></i>
-                            <p class="text-muted mt-2">Nenhum equipamento encontrado</p>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                                @if(auth()->user()->isAdmin())
+                                                <a href="{{ route('equipments.edit', $equipment) }}" class="btn btn-icon btn-outline-warning" title="Editar" aria-label="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+
+                                                <form method="POST" action="{{ route('equipments.destroy', $equipment) }}" style="display: inline;" onsubmit="return confirm('Tem certeza que quer remover este equipamento?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-icon btn-outline-danger" title="Remover" aria-label="Remover">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
+
+                                                @if($equipment->status === 'available' && !auth()->user()->isAdmin())
+                                                <a href="{{ route('reservations.create', ['equipment_id' => $equipment->id]) }}" class="btn btn-icon btn-outline-success" title="Requisitar" aria-label="Requisitar">
+                                                    <i class="bi bi-plus-circle"></i>
+                                                </a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="p-4 text-center text-muted">
+                            <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                            <p class="mt-2">Nenhum equipamento nesta categoria</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
-    </div>
+    @empty
+        <div class="alert alert-warning">
+            Nenhuma categoria disponível
+        </div>
+    @endforelse
 </div>
-
-<div class="mt-3">
-    {{ $equipments->links() }}
-</div>
-
-<script>
-    // Filtro dinâmico em tempo real
-    let debounceTimer;
-    const form = document.getElementById('filterForm');
-    const searchInput = document.getElementById('searchInput');
-    const categorySelect = document.getElementById('categorySelect');
-    const statusSelect = document.getElementById('statusSelect');
-    const clearBtn = document.getElementById('clearFilters');
-
-    function autoSubmit() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            form.submit();
-        }, 500);
-    }
-
-    searchInput.addEventListener('input', autoSubmit);
-    categorySelect.addEventListener('change', () => {
-        form.submit();
-    });
-    statusSelect.addEventListener('change', () => {
-        form.submit();
-    });
-
-    // Botão limpar filtros
-    clearBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        categorySelect.value = '';
-        statusSelect.value = '';
-        form.submit();
-    });
-
-    let isFiltering = false;
-    form.addEventListener('submit', () => {
-        if (!isFiltering) {
-            isFiltering = true;
-            const submitBtn = document.createElement('div');
-            submitBtn.className = 'filtering-indicator';
-            submitBtn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Filtrando...';
-            form.appendChild(submitBtn);
-        }
-    });
-</script>
 
 <style>
-    .filtering-indicator {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #667eea;
-        color: white;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        z-index: 9999;
-        animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .spin {
-        display: inline-block;
-        animation: spin 1s linear infinite;
-    }
-
-    #searchInput:focus,
-    #categorySelect:focus,
-    #statusSelect:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-    }
-
-    #clearFilters {
-        transition: all 0.3s ease;
-    }
-
-    #clearFilters:hover {
-        background: #ef4444;
-        color: white;
-        border-color: #ef4444;
-    }
-
     .equipment-img {
         width: 44px;
         height: 44px;
@@ -306,38 +209,73 @@
     .btn-outline-danger:hover {
         background: linear-gradient(135deg, #f55555 0%, #dc2626 100%);
     }
+    .btn-outline-success {
+        color: #fff;
+        background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    }
+    .btn-outline-success:hover {
+        background: linear-gradient(135deg, #2cc48f 0%, #059669 100%);
+    }
 
-    .nav-tabs {
-        gap: 10px;
-    }
-    .nav-link {
-        color: #667eea !important;
-        border: none;
-        border-bottom: 2px solid transparent !important;
-        border-radius: 8px 8px 0 0;
-        padding: 12px 16px;
-        transition: all 0.2s ease;
-    }
-    .nav-link:hover {
-        background-color: #f3f4f6;
-        border-bottom-color: #667eea !important;
-    }
-    .nav-link.active {
+    .accordion-button:not(.collapsed) {
         background-color: #f0f4ff;
-        border-bottom-color: #667eea !important;
-        font-weight: 600;
+        color: #667eea;
+    }
+    .accordion-button:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.2);
+    }
+
+    .status-available {
+        background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+        color: white;
+    }
+    .status-loaned {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+        color: white;
+    }
+    .status-maintenance {
+        background: linear-gradient(135deg, #f87171 0%, #dc2626 100%) !important;
+        color: white;
+    }
+
+    .table-equipment {
+        font-size: 0.95rem;
+    }
+    .table-equipment tbody tr:hover {
+        background-color: rgba(102, 126, 234, 0.05) !important;
     }
 </style>
 
 <script>
-    function filterByCategory(categoryId) {
-        const params = new URLSearchParams(window.location.search);
-        if (categoryId) {
-            params.set('category', categoryId);
-        } else {
-            params.delete('category');
-        }
-        window.location.search = params.toString();
+    const searchInput = document.getElementById('globalSearch');
+    const statusSelect = document.getElementById('globalStatus');
+    const clearBtn = document.getElementById('clearAllFilters');
+
+    searchInput.addEventListener('input', filterEquipments);
+    statusSelect.addEventListener('change', filterEquipments);
+    clearBtn.addEventListener('click', clearFilters);
+
+    function filterEquipments() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusFilter = statusSelect.value;
+        const rows = document.querySelectorAll('.equipment-row');
+
+        rows.forEach(row => {
+            const searchText = row.dataset.search;
+            const status = row.dataset.status;
+
+            const matchesSearch = !searchTerm || searchText.includes(searchTerm);
+            const matchesStatus = !statusFilter || status === statusFilter;
+
+            row.style.display = matchesSearch && matchesStatus ? '' : 'none';
+        });
+    }
+
+    function clearFilters() {
+        searchInput.value = '';
+        statusSelect.value = '';
+        filterEquipments();
     }
 </script>
 @endsection
