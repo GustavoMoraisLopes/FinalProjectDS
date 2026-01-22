@@ -162,7 +162,6 @@
         // Inicializar datepickers globais
         document.addEventListener('DOMContentLoaded', function() {
             if (window.flatpickr) {
-                // Datepicker padrão (com restrição: hoje em diante) - para reservas
                 flatpickr('.datepicker', {
                     allowInput: true,
                     dateFormat: 'd/m/Y',

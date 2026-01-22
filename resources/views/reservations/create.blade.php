@@ -112,16 +112,62 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="pickup_time" class="form-label">Hora de Levantamento *</label>
-                            <input type="time" class="form-control @error('pickup_time') is-invalid @enderror" id="pickup_time" name="pickup_time" value="{{ old('pickup_time', '09:00') }}" required>
-                            @error('pickup_time')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <label for="pickup_time_slider" class="form-label">Hora de Levantamento *</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="range" class="form-range" id="pickup_time_slider" min="8" max="22" value="9" step="0.5">
+                                <div class="time-display-pickup" style="min-width: 60px; text-align: center; font-weight: bold; font-size: 1.1rem;">
+                                    09:00
+                                </div>
+                            </div>
+                            <input type="hidden" id="pickup_time" name="pickup_time" value="{{ old('pickup_time', '09:00') }}">
+                            @error('pickup_time')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            <small class="text-muted d-block mt-2">Arraste para selecionar a hora</small>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="return_time" class="form-label">Hora de Devolução *</label>
-                            <input type="time" class="form-control @error('return_time') is-invalid @enderror" id="return_time" name="return_time" value="{{ old('return_time', '17:00') }}" required>
-                            @error('return_time')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <label for="return_time_slider" class="form-label">Hora de Devolução *</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="range" class="form-range" id="return_time_slider" min="8" max="23" value="17" step="0.5">
+                                <div class="time-display-return" style="min-width: 60px; text-align: center; font-weight: bold; font-size: 1.1rem;">
+                                    17:00
+                                </div>
+                            </div>
+                            <input type="hidden" id="return_time" name="return_time" value="{{ old('return_time', '17:00') }}">
+                            @error('return_time')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            <small class="text-muted d-block mt-2">Arraste para selecionar a hora</small>
                         </div>
                     </div>
+
+                    <style>
+                        .form-range {
+                            height: 8px;
+                            border-radius: 5px;
+                        }
+                        .form-range::-webkit-slider-thumb {
+                            width: 22px;
+                            height: 22px;
+                            background: linear-gradient(135deg, #667eea 0%, #667eea 100%);
+                            border: 2px solid #fff;
+                            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+                            cursor: pointer;
+                        }
+                        .form-range::-moz-range-thumb {
+                            width: 22px;
+                            height: 22px;
+                            background: linear-gradient(135deg, #667eea 0%, #667eea 100%);
+                            border: 2px solid #fff;
+                            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+                            cursor: pointer;
+                        }
+                        .form-range::-webkit-slider-runnable-track {
+                            background: linear-gradient(to right, #e9ecef 0%, #dee2e6 100%);
+                            border-radius: 5px;
+                            height: 8px;
+                        }
+                        .form-range::-moz-range-track {
+                            background: linear-gradient(to right, #e9ecef 0%, #dee2e6 100%);
+                            border-radius: 5px;
+                        }
+                    </style>
 
                     <hr class="my-4">
 
@@ -653,5 +699,63 @@
             classYearSelect.disabled = true;
         }
     }
+
+    // Slider de horas
+    const pickupTimeSlider = document.getElementById('pickup_time_slider');
+    const returnTimeSlider = document.getElementById('return_time_slider');
+    const pickupTimeInput = document.getElementById('pickup_time');
+    const returnTimeInput = document.getElementById('return_time');
+    const pickupTimeDisplay = document.querySelector('.time-display-pickup');
+    const returnTimeDisplay = document.querySelector('.time-display-return');
+    const startDateInput = document.getElementById('start_date');
+
+    // Função para converter slider value em HH:MM
+    function sliderToTime(sliderValue) {
+        const hours = Math.floor(sliderValue);
+        const minutes = (sliderValue % 1) * 60;
+        return `${String(hours).padStart(2, '0')}:${String(Math.round(minutes)).padStart(2, '0')}`;
+    }
+
+    // Update pickup time
+    pickupTimeSlider.addEventListener('input', function() {
+        const timeStr = sliderToTime(this.value);
+        pickupTimeInput.value = timeStr;
+        pickupTimeDisplay.textContent = timeStr;
+    });
+
+    // Update return time
+    returnTimeSlider.addEventListener('input', function() {
+        const timeStr = sliderToTime(this.value);
+        returnTimeInput.value = timeStr;
+        returnTimeDisplay.textContent = timeStr;
+    });
+
+    // Desativar pickup_time se for hoje e antes da hora atual
+    function updatePickupTimeSlider() {
+        const startDate = startDateInput.value;
+        const today = new Date().toISOString().split('T')[0];
+        const currentTime = new Date();
+        const currentHours = currentTime.getHours();
+        const currentMinutes = currentTime.getMinutes();
+        const currentDecimal = currentHours + (currentMinutes / 60);
+
+        if (startDate === today) {
+            // Se for hoje, o mínimo é a hora atual
+            pickupTimeSlider.min = Math.ceil(currentDecimal * 2) / 2; // Arredondar para 0.5
+
+            // Se o valor atual for menor que o mínimo, ajusta
+            if (parseFloat(pickupTimeSlider.value) < parseFloat(pickupTimeSlider.min)) {
+                pickupTimeSlider.value = pickupTimeSlider.min;
+                const timeStr = sliderToTime(pickupTimeSlider.value);
+                pickupTimeInput.value = timeStr;
+                pickupTimeDisplay.textContent = timeStr;
+            }
+        } else if (startDate && startDate > today) {
+            pickupTimeSlider.min = 8;
+        }
+    }
+
+    startDateInput.addEventListener('change', updatePickupTimeSlider);
+    document.addEventListener('DOMContentLoaded', updatePickupTimeSlider);
 </script>
 @endsection
