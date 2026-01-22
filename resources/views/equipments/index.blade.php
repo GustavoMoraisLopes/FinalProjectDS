@@ -30,40 +30,42 @@
     @endif
 </div>
 
-<!-- Acordeão de Categorias -->
-<div class="accordion" id="categoriesAccordion">
-    @forelse($categories as $category)
-        @php
-            $categoryEquipments = $equipments->filter(fn($eq) => $eq->category_id == $category->id);
-        @endphp
+<!-- Acordeão de Tipos de Equipamento -->
+<div class="accordion" id="typesAccordion">
+    @php
+        // Agrupar equipamentos por tipo
+        $equipmentsByType = $equipments->groupBy(fn($eq) => $eq->equipmentType->name ?? 'Sem Tipo')
+            ->sortKeys();
+    @endphp
 
+    @forelse($equipmentsByType as $typeName => $typeEquipments)
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button{{ $loop->first ? '' : ' collapsed' }}" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapse{{ $category->id }}" aria-expanded="{{ $loop->first ? 'true' : 'false' }}">
-                    <i class="bi bi-box me-2"></i>
-                    <strong>{{ $category->name }}</strong>
-                    <span class="badge bg-secondary ms-2">{{ $categoryEquipments->count() }}</span>
+                        data-bs-target="#collapseType{{ $loop->index }}" aria-expanded="{{ $loop->first ? 'true' : 'false' }}">
+                    <i class="bi bi-collection me-2"></i>
+                    <strong>{{ $typeName }}</strong>
+                    <span class="badge bg-secondary ms-2">{{ $typeEquipments->count() }}</span>
                 </button>
             </h2>
-            <div id="collapse{{ $category->id }}" class="accordion-collapse collapse{{ $loop->first ? ' show' : '' }}"
-                 data-bs-parent="#categoriesAccordion">
+            <div id="collapseType{{ $loop->index }}" class="accordion-collapse collapse{{ $loop->first ? ' show' : '' }}"
+                 data-bs-parent="#typesAccordion">
                 <div class="accordion-body p-0">
-                    @if($categoryEquipments->count() > 0)
+                    @if($typeEquipments->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-equipment table-hover mb-0">
                                 <thead>
                                     <tr>
                                         <th>Equipamento</th>
                                         <th>S/N</th>
-                                        <th>Tipo</th>
+                                        <th>Categoria</th>
                                         <th>Localização</th>
                                         <th>Estado</th>
                                         <th class="text-center">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($categoryEquipments as $equipment)
+                                    @foreach($typeEquipments as $equipment)
                                     <tr class="equipment-row" data-search="{{ strtolower($equipment->name . ' ' . $equipment->serial_number) }}"
                                         data-status="{{ $equipment->status }}">
                                         <td>
@@ -83,8 +85,8 @@
                                         </td>
                                         <td><code>{{ $equipment->serial_number }}</code></td>
                                         <td>
-                                            @if($equipment->equipmentType)
-                                                <span class="badge bg-light text-dark">{{ $equipment->equipmentType->name }}</span>
+                                            @if($equipment->category)
+                                                <span class="badge bg-light text-dark">{{ $equipment->category->name }}</span>
                                             @else
                                                 <span class="text-muted">-</span>
                                             @endif
@@ -136,7 +138,7 @@
                     @else
                         <div class="p-4 text-center text-muted">
                             <i class="bi bi-inbox" style="font-size: 2rem;"></i>
-                            <p class="mt-2">Nenhum equipamento nesta categoria</p>
+                            <p class="mt-2">Nenhum equipamento neste tipo</p>
                         </div>
                     @endif
                 </div>
@@ -144,7 +146,7 @@
         </div>
     @empty
         <div class="alert alert-warning">
-            Nenhuma categoria disponível
+            Nenhum equipamento disponível
         </div>
     @endforelse
 </div>

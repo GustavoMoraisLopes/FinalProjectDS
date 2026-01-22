@@ -139,6 +139,7 @@ class ReservationController extends Controller
     public function show(Reservation $reservation)
     {
         $this->authorize('view', $reservation);
+        $reservation->load(['items.equipment.category', 'equipment', 'user']);
         return view('reservations.show', compact('reservation'));
     }
 
@@ -168,10 +169,19 @@ class ReservationController extends Controller
             // Send notification on status change
             if ($new['status'] === 'approved') {
                 $reservation->user->notify(new ReservationApprovedNotification($reservation));
-                // Marcar equipamento como emprestado imediatamente quando aprovado
+
+                // Marcar equipamento principal como emprestado
                 $reservation->equipment->update(['status' => 'loaned']);
+
+                // Marcar todos os acessórios da requisição como emprestados
+                foreach ($reservation->items as $item) {
+                    if ($item->item_type === 'accessory' && $item->equipment) {
+                        $item->equipment->update(['status' => 'loaned']);
+                    }
+                }
+
                 $reservation->update(['checked_out_at' => now()]);
-                AuditLogger::log('reservation.checkout', $reservation, 'Equipamento requisitado automaticamente ao aprovar');
+                AuditLogger::log('reservation.checkout', $reservation, 'Equipamento e acessórios requisitados automaticamente ao aprovar');
                 $this->sendReturnReminderIfClose($reservation);
             } elseif ($new['status'] === 'cancelled') {
                 $reason = $request->input('rejection_reason');
@@ -203,13 +213,22 @@ class ReservationController extends Controller
             'checked_out_at' => now(),
         ]);
 
+        // Marcar equipamento principal como emprestado
         $reservation->equipment->update(['status' => 'loaned']);
-        AuditLogger::log('reservation.checkout', $reservation, 'Equipamento requisitado (checkout)');
+
+        // Marcar todos os acessórios da requisição como emprestados
+        foreach ($reservation->items as $item) {
+            if ($item->item_type === 'accessory' && $item->equipment) {
+                $item->equipment->update(['status' => 'loaned']);
+            }
+        }
+
+        AuditLogger::log('reservation.checkout', $reservation, 'Equipamento e acessórios requisitados (checkout)');
 
         // Disparar lembrete imediato se devolução é hoje/amanhã ou já em atraso
         $this->sendReturnReminderIfClose($reservation);
 
-        return redirect()->route('reservations.show', $reservation)->with('success', 'Equipamento requisitado com sucesso!');
+        return redirect()->route('reservations.show', $reservation)->with('success', 'Equipamento e acessórios requisitados com sucesso!');
     }
 
     public function checkin(Reservation $reservation)
@@ -221,10 +240,19 @@ class ReservationController extends Controller
             'checked_in_at' => now(),
         ]);
 
+        // Marcar equipamento principal como disponível
         $reservation->equipment->update(['status' => 'available']);
-        AuditLogger::log('reservation.checkin', $reservation, 'Equipamento devolvido (checkin)');
 
-        return redirect()->route('reservations.show', $reservation)->with('success', 'Equipamento devolvido com sucesso!');
+        // Marcar todos os acessórios da requisição como disponíveis
+        foreach ($reservation->items as $item) {
+            if ($item->item_type === 'accessory' && $item->equipment) {
+                $item->equipment->update(['status' => 'available']);
+            }
+        }
+
+        AuditLogger::log('reservation.checkin', $reservation, 'Equipamento e acessórios devolvidos (checkin)');
+
+        return redirect()->route('reservations.show', $reservation)->with('success', 'Equipamento e acessórios devolvidos com sucesso!');
     }
 
     /**

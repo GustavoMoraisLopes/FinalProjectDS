@@ -24,7 +24,7 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <h6 class="text-muted">Equipamento</h6>
-                        <p><a href="{{ route('equipments.show', $reservation->equipment) }}">{{ $reservation->equipment->name }}</a></p>
+                        <p><a href="{{ route('equipments.show', $reservation->equipment) }}" style="text-decoration: none;">{{ $reservation->equipment->name }}</a></p>
                     </div>
                     <div class="col-md-6">
                         <h6 class="text-muted">Requisitante</h6>
@@ -142,62 +142,41 @@
                 </div>
                 @endif
 
-                <hr>
-
-                <div class="d-flex gap-2">
-                    <a href="{{ route('reservations.index') }}" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Voltar
-                    </a>
-
-                    @if(auth()->user()->isAdmin())
-                        @if($reservation->status == 'pending')
-                        <form action="{{ route('reservations.update', $reservation) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="status" value="approved">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check-circle"></i> Aprovar
-                            </button>
-                        </form>
-                        <form action="{{ route('reservations.update', $reservation) }}" method="POST" class="d-inline" onsubmit="return confirm('Rejeitar esta requisição?');">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="status" value="cancelled">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-x-circle"></i> Rejeitar
-                            </button>
-                        </form>
-                        @endif
-
-                        @if($reservation->status == 'approved' && !$reservation->checked_out_at)
-                        <form action="{{ route('reservations.checkout', $reservation) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-info">
-                                <i class="bi bi-box-arrow-right"></i> Requisitar
-                            </button>
-                        </form>
-                        @endif
-
-                        @if($reservation->checked_out_at && !$reservation->checked_in_at)
-                        <form action="{{ route('reservations.checkin', $reservation) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-warning">
-                                <i class="bi bi-box-arrow-in"></i> Devolver
-                            </button>
-                        </form>
-                        @endif
-                    @elseif($reservation->user_id === auth()->id() && $reservation->status == 'pending')
-                        <form action="{{ route('reservations.destroy', $reservation) }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja cancelar esta requisição?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash"></i> Cancelar Requisição
-                            </button>
-                        </form>
-                    @endif
-                </div>
+                <hr class="my-4">
             </div>
         </div>
-    </div>
-</div>
+
+        <!-- Card de Equipamentos Requisitados -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-box-seam"></i> Equipamentos Requisitados</h5>
+            </div>
+            <div class="card-body">
+                @foreach($reservation->items as $item)
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <h6 class="text-muted mb-2">{{ $item->equipment->name }}</h6>
+                        <small class="text-muted d-block">
+                            <i class="bi bi-bookmark"></i> {{ $item->equipment->category->name }}
+                            <span class="mx-1">•</span>
+                            <i class="bi bi-hash"></i> {{ $item->equipment->serial_number }}
+                            @if($item->quantity > 1)
+                            <span class="mx-1">•</span>
+                            Qtd: {{ $item->quantity }}
+                            @endif
+                        </small>
+                    </div>
+                </div>
+                @if(!$loop->last)
+                <hr class="my-3">
+                @endif
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="d-flex gap-2 mt-4">
+            <a href="{{ route('reservations.index') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
 @endsection
