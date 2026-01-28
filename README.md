@@ -247,7 +247,5 @@ Este projeto é open-source e está disponível sob a licença **MIT**.
 
 <div align="center">
   <p>Desenvolvido em Laravel</p>
-<<<<<<< HEAD=======
->>>>>>> 0dbc1c12c689b2ae734154717a23df373f427ca2
 </div>
 
