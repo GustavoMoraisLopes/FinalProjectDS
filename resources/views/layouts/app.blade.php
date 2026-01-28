@@ -38,11 +38,16 @@
         @auth
         <aside class="sidebar bg-dark-blue" id="sidebar">
             <div class="sidebar-header p-3">
-                <div class="d-flex align-items-center">
-                    <div class="logo-icon me-2">
-                        <i class="bi bi-box-seam text-white fs-4"></i>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="logo-icon me-2">
+                            <i class="bi bi-box-seam text-white fs-4"></i>
+                        </div>
+                        <h4 class="text-white mb-0 fw-bold">LabStock</h4>
                     </div>
-                    <h4 class="text-white mb-0 fw-bold">LabStock</h4>
+                    <button class="btn btn-link text-white d-md-none p-0" id="closeSidebar" style="font-size: 1.5rem;">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
             </div>
 
@@ -121,11 +126,12 @@
                     <button class="btn btn-link text-dark d-md-none" id="toggleSidebar">
                         <i class="bi bi-list fs-4"></i>
                     </button>
-                    <div>
-                        <h5 class="mb-0">@yield('page-title', 'LabStock')</h5>
-                        <small class="text-muted">@yield('page-subtitle', '')</small>
+                    <div class="flex-grow-1">
+                        <h5 class="mb-0 d-none d-md-block">@yield('page-title', 'LabStock')</h5>
+                        <h6 class="mb-0 d-md-none">@yield('page-title', 'LabStock')</h6>
+                        <small class="text-muted d-none d-sm-block">@yield('page-subtitle', '')</small>
                     </div>
-                    <div>
+                    <div class="d-none d-md-block">
                         <span class="text-muted">Bem-vindo, {{ auth()->user()->name }}</span>
                     </div>
                 </div>
@@ -189,8 +195,28 @@
 
     <script>
         // Toggle sidebar em mobile
-        document.getElementById('toggleSidebar')?.addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('show');
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const closeBtn = document.getElementById('closeSidebar');
+
+        toggleBtn?.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
+        });
+
+        closeBtn?.addEventListener('click', function() {
+            sidebar.classList.remove('show');
+        });
+
+        // Fechar sidebar ao clicar fora dele em mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth < 768) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggle = toggleBtn?.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            }
         });
     </script>
 

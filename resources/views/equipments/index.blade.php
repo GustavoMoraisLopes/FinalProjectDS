@@ -7,7 +7,7 @@
 @section('content')
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <div class="d-flex gap-2 flex-fill" style="max-width: 500px;">
+    <div class="d-flex gap-2 flex-fill inventory-filters" style="max-width: 500px;">
         <input type="text" id="globalSearch" class="form-control" placeholder="Pesquisar em tudo..." autocomplete="off">
 
         <select id="globalStatus" class="form-select" style="min-width: 150px;">
@@ -68,7 +68,7 @@
                                     @foreach($typeEquipments as $equipment)
                                     <tr class="equipment-row" data-search="{{ strtolower($equipment->name . ' ' . $equipment->serial_number) }}"
                                         data-status="{{ $equipment->status }}">
-                                        <td>
+                                        <td data-label="Equipamento">
                                             <div class="d-flex align-items-center">
                                                 <div class="equipment-img bg-light me-2 d-flex align-items-center justify-content-center">
                                                     @if($equipment->image)
@@ -83,16 +83,16 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td><code>{{ $equipment->serial_number }}</code></td>
-                                        <td>
+                                        <td data-label="S/N"><code>{{ $equipment->serial_number }}</code></td>
+                                        <td data-label="Categoria">
                                             @if($equipment->category)
                                                 <span class="badge bg-light text-dark">{{ $equipment->category->name }}</span>
                                             @else
                                                 <span class="text-muted">-</span>
                                             @endif
                                         </td>
-                                        <td>{{ $equipment->location }}</td>
-                                        <td>
+                                        <td data-label="Localização">{{ $equipment->location }}</td>
+                                        <td data-label="Estado">
                                             @if($equipment->status == 'available')
                                                 <span class="badge status-available">Disponível</span>
                                             @elseif($equipment->status == 'loaned')
@@ -103,7 +103,7 @@
                                                 <span class="badge bg-secondary">Indisponível</span>
                                             @endif
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" data-label="Ações">
                                             <div class="d-flex justify-content-center gap-2">
                                                 <a href="{{ route('equipments.show', $equipment) }}" class="btn btn-icon btn-outline-info" title="Ver detalhes" aria-label="Ver detalhes">
                                                     <i class="bi bi-eye"></i>
@@ -246,6 +246,65 @@
     }
     .table-equipment tbody tr:hover {
         background-color: rgba(102, 126, 234, 0.05) !important;
+    }
+
+    @media (max-width: 768px) {
+        .inventory-filters {
+            flex-direction: column;
+            max-width: none !important;
+            width: 100%;
+        }
+        .inventory-filters .form-control,
+        .inventory-filters .form-select,
+        .inventory-filters .btn {
+            width: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: visible;
+        }
+        .table-equipment thead {
+            display: none;
+        }
+        .table-equipment,
+        .table-equipment tbody,
+        .table-equipment tr,
+        .table-equipment td {
+            display: block;
+            width: 100%;
+        }
+        .table-equipment tr {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0.75rem 0.5rem;
+        }
+        .table-equipment td {
+            padding: 0.35rem 0;
+        }
+        .table-equipment td::before {
+            content: attr(data-label);
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.2rem;
+        }
+        .table-equipment td.text-center {
+            text-align: left !important;
+        }
+        .table-equipment td .d-flex.justify-content-center {
+            justify-content: flex-start !important;
+        }
+        .equipment-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+        }
+        .btn-icon {
+            --size: 32px;
+            border-radius: 12px;
+        }
     }
 </style>
 
