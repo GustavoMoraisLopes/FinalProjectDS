@@ -27,18 +27,18 @@
                 <tbody>
                     @forelse($users as $user)
                     <tr>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ $user->department ?? '-' }}</td>
-                        <td class="text-center">{{ $user->phone ?? '-' }}</td>
-                        <td class="text-center">
+                        <td data-label="Nome">{{ $user->name }}</td>
+                        <td data-label="Email">{{ $user->email }}</td>
+                        <td data-label="Departamento">{{ $user->department ?? '-' }}</td>
+                        <td data-label="Telefone" class="text-center">{{ $user->phone ?? '-' }}</td>
+                        <td data-label="Role" class="text-center">
                             @if($user->isAdmin())
                                 <span class="badge bg-danger">Admin</span>
                             @else
                                 <span class="badge bg-secondary">User</span>
                             @endif
                         </td>
-                        <td class="text-center">
+                        <td data-label="Tipo" class="text-center">
                             <div class="badge-row">
                                 @if($user->isTeacher())
                                     <span class="badge bg-success">Professor</span>
@@ -53,8 +53,8 @@
                                 @endif
                             </div>
                         </td>
-                        <td class="text-center"><small>{{ $user->created_at->format('d/m/Y') }}</small></td>
-                        <td class="text-center actions-cell">
+                        <td data-label="Membro desde" class="text-center"><small>{{ $user->created_at->format('d/m/Y') }}</small></td>
+                        <td data-label="Ações" class="text-center actions-cell">
                             @if($user->hasPendingTeacherRequest())
                                 <div class="d-flex justify-content-center gap-2 flex-wrap">
                                     <form action="{{ route('admin.approve-teacher', $user->id) }}" method="POST" onsubmit="return confirm('Aprovar {{ $user->name }} como professor?');">
@@ -119,9 +119,41 @@
         min-width: 96px;
         white-space: nowrap;
     }
-    @media (max-width: 992px) {
-        .users-table {
-            font-size: 0.9rem;
+    @media (max-width: 768px) {
+        .users-table thead {
+            display: none;
+        }
+        .users-table, .users-table tbody,
+        .users-table tr, .users-table td {
+            display: block;
+            width: 100%;
+        }
+        .users-table tr {
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem;
+            background: #fff;
+        }
+        .users-table td {
+            text-align: left !important;
+            padding: 0.5rem 0;
+            border: none;
+        }
+        .users-table td::before {
+            content: attr(data-label);
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+        .users-table .badge-row {
+            justify-content: flex-start;
+        }
+        .actions-cell .d-flex {
+            justify-content: flex-start !important;
         }
     }
 </style>

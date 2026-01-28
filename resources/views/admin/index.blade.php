@@ -5,8 +5,8 @@
 @section('page-subtitle', 'Logs de auditoria e gestão de utilizadores.')
 
 @section('content')
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
+<div class="row g-3 mb-4 admin-stats">
+    <div class="col-md-3 col-sm-6">
         <div class="card stat-card shadow-sm">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
@@ -39,8 +39,8 @@
     </div>
 </div>
 
-<div class="row g-3">
-    <div class="col-lg-8">
+<div class="row g-3 admin-layout">
+    <div class="col-lg-8 col-md-12">
         <div class="card shadow-sm">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Atividade Recente</h5>
@@ -62,10 +62,10 @@
                         <tbody>
                             @forelse($recentLogs as $log)
                             <tr>
-                                <td><small>{{ $log->created_at->format('d/m/Y H:i') }}</small></td>
-                                <td>{{ $log->user?->name ?? 'Sistema' }}</td>
-                                <td><code>{{ $log->action }}</code></td>
-                                <td><small>{{ substr($log->description, 0, 50) }}...</small></td>
+                                <td data-label="Data/Hora"><small>{{ $log->created_at->format('d/m/Y H:i') }}</small></td>
+                                <td data-label="Utilizador">{{ $log->user?->name ?? 'Sistema' }}</td>
+                                <td data-label="Ação"><code>{{ $log->action }}</code></td>
+                                <td data-label="Descrição"><small>{{ substr($log->description, 0, 50) }}...</small></td>
                             </tr>
                             @empty
                             <tr>
@@ -79,7 +79,7 @@
         </div>
     </div>
 
-    <div class="col-lg-4">
+    <div class="col-lg-4 col-md-12">
         <div class="card shadow-sm">
             <div class="card-header bg-white">
                 <h5 class="mb-0">Atalhos</h5>
@@ -164,6 +164,50 @@
     .card-header .btn-outline-primary:hover {
         background: #6f9db4;
         color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        .admin-stats .col-sm-6 {
+            width: 100%;
+        }
+        .admin-layout > div {
+            margin-bottom: 1rem;
+        }
+        table thead {
+            display: none;
+        }
+        table, table tbody,
+        table tr, table td {
+            display: block;
+            width: 100%;
+        }
+        table tr {
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem;
+            background: #fff;
+        }
+        table td {
+            text-align: left !important;
+            padding: 0.5rem 0;
+            border: none;
+        }
+        table td::before {
+            content: attr(data-label);
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+        .shortcut-btn {
+            padding: 0.75rem;
+        }
+        .stat-card h3 {
+            font-size: 1.5rem;
+        }
     }
 </style>
 @endpush

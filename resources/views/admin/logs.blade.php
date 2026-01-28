@@ -7,12 +7,12 @@
 @section('content')
 <div class="card shadow-sm mb-4">
     <div class="card-body">
-        <form method="GET" action="{{ route('admin.logs') }}" class="row g-3 align-items-end">
-            <div class="col-lg-6">
+        <form method="GET" action="{{ route('admin.logs') }}" class="row g-3 align-items-end logs-filters">
+            <div class="col-lg-6 col-md-12">
                 <label for="action" class="form-label">Ação</label>
                 <input type="text" class="form-control" name="action" placeholder="Filtrar por ação..." value="{{ request('action') }}">
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-4 col-md-12">
                 <label for="user_id" class="form-label">Utilizador</label>
                 <select name="user_id" class="form-select">
                     <option value="">Todos os utilizadores</option>
@@ -23,7 +23,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-lg-2 d-flex gap-2">
+            <div class="col-lg-2 col-md-12 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100 btn-sm">
                     <i class="bi bi-search"></i> Filtrar
                 </button>
@@ -49,9 +49,9 @@
                 <tbody>
                     @forelse($logs as $log)
                     <tr>
-                        <td><small>{{ $log->created_at->format('d/m/Y H:i:s') }}</small></td>
-                        <td><small>{{ $log->user?->name ?? 'Sistema' }}</small></td>
-                        <td>
+                        <td data-label="Data/Hora"><small>{{ $log->created_at->format('d/m/Y H:i:s') }}</small></td>
+                        <td data-label="Utilizador"><small>{{ $log->user?->name ?? 'Sistema' }}</small></td>
+                        <td data-label="Ação">
                             <div class="action-cell">
                                 <strong class="text-dark">
                                     @switch($log->action)
@@ -91,8 +91,8 @@
                                 </strong>
                             </div>
                         </td>
-                        <td><small class="text-truncate d-inline-block" style="max-width: 180px;">{{ $log->model_type }}</small></td>
-                        <td><small class="text-truncate d-inline-block" style="max-width: 360px;" title="{{ $log->description }}">{{ $log->description }}</small></td>
+                        <td data-label="Modelo"><small class="text-truncate d-inline-block" style="max-width: 180px;">{{ $log->model_type }}</small></td>
+                        <td data-label="Descrição"><small class="text-truncate d-inline-block" style="max-width: 360px;" title="{{ $log->description }}">{{ $log->description }}</small></td>
                     </tr>
                     @empty
                     <tr>
@@ -142,9 +142,49 @@
         font-weight: 600;
         font-size: 0.95rem;
     }
-    @media (max-width: 992px) {
-        .audit-table {
-            font-size: 0.95rem;
+    @media (max-width: 768px) {
+        .logs-filters {
+            flex-direction: column;
+        }
+        .audit-table thead {
+            display: none;
+        }
+        .audit-table, .audit-table tbody,
+        .audit-table tr, .audit-table td {
+            display: block;
+            width: 100%;
+        }
+        .audit-table tr {
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem;
+            background: #fff;
+        }
+        .audit-table td {
+            text-align: left !important;
+            padding: 0.5rem 0;
+            border: none;
+            white-space: normal !important;
+        }
+        .audit-table td::before {
+            content: attr(data-label);
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+        .audit-table td small {
+            max-width: 100% !important;
+        }
+        .audit-table .action-cell {
+            display: block;
+        }
+        .audit-table .action-cell strong {
+            display: block;
+            margin-top: 0.25rem;
         }
     }
 </style>
