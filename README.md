@@ -223,7 +223,19 @@ labstock/
 
 ## 📸 Screenshots
 
-*()*
+(<img width="1919" height="1160" alt="screenshot_01_login" src="https://github.com/user-attachments/assets/8ae0d52a-89c0-47c3-88b1-8ba85a742cad" />
+<img width="1919" height="1160" alt="screenshot_02_register" src="https://github.com/user-attachments/assets/84288e63-0199-4941-8424-9d67fc911c88" />
+<img width="1919" height="1159" alt="screenshot_03_dashboard" src="https://github.com/user-attachments/assets/8256e226-02e1-4946-bc2d-4d42d55881ab" />
+<img width="1919" height="1164" alt="screenshot_07_reservation_create" src="https://github.com/user-attachments/assets/9b838300-9ead-4cd3-98d5-fdb02df89a20" />
+<img width="1919" height="1157" alt="screenshot_15_notifications" src="https://github.com/user-attachments/assets/c6e2dc56-525d-4bbd-b49a-cdcf1ba423c8" />
+<img width="429" height="931" alt="screenshot_16_mobile_dashboard" src="https://github.com/user-attachments/assets/7dac68b4-f96b-4009-8214-f200cb0f91ef" />
+<img width="431" height="934" alt="screenshot_17_mobile_sidebar" src="https://github.com/user-attachments/assets/031ea1de-1fde-452c-a46d-0b8fb050ccad" />
+
+
+
+
+
+
 
 ---
 
